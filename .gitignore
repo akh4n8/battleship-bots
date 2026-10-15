@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE / Editor configuration
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Large datasets & generated synthetic data
+data/sherlock_1m_dataset/
+data/*outliers*.csv
+data/synthetic_games_*.npz
+
+# Python testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & scratch
+*.log
+scratch/
