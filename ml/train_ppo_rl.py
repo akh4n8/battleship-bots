@@ -15,7 +15,7 @@ DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from ml.train_sherlock_nn import ResConvBlock, SherlockNeuralModel
+from ml.train_sherlock_nn import ResConvBlock
 from ml.rl_battleship_env import DecomposedBattleshipEnv
 
 class SherlockActorCritic(nn.Module):
@@ -33,7 +33,14 @@ class SherlockActorCritic(nn.Module):
             ResConvBlock(64),
             ResConvBlock(64)
         )
-        # Head 1: Policy Head (Actor: 100-way categorical distribution)
+        # Head 1: Occupancy Head (matches SherlockNeuralModel for seamless heatmap generation)
+        self.occupancy_head = nn.Sequential(
+            nn.Conv2d(64, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.1, inplace=True),
+            nn.Conv2d(32, 1, kernel_size=1)
+        )
+        # Head 2: Policy Head (Actor: 100-way categorical distribution)
         self.policy_head = nn.Sequential(
             nn.Conv2d(64, 32, kernel_size=3, padding=1),
             nn.BatchNorm2d(32),
@@ -43,7 +50,7 @@ class SherlockActorCritic(nn.Module):
             nn.LeakyReLU(0.1, inplace=True),
             nn.Linear(256, 100)
         )
-        # Head 2: Value Head (Critic: Expected remaining return)
+        # Head 3: Value Head (Critic: Expected remaining return)
         self.value_head = nn.Sequential(
             nn.Conv2d(64, 16, kernel_size=1),
             nn.BatchNorm2d(16),
@@ -70,21 +77,60 @@ class SherlockActorCritic(nn.Module):
             action = dist.sample()
         return action, dist.log_prob(action), dist.entropy(), value
 
+def safe_save(model, path):
+    try:
+        torch.save(model.state_dict(), path)
+        return path
+    except Exception as e:
+        tmp_path = os.path.join('/tmp', os.path.basename(path))
+        print(f"⚠️ Could not write to {path} ({e}). Saved to {tmp_path}")
+        torch.save(model.state_dict(), tmp_path)
+        return tmp_path
+
+def safe_onnx_export(model, dummy_input, path, opset_version=18):
+    try:
+        torch.onnx.export(
+            model,
+            dummy_input,
+            path,
+            export_params=True,
+            opset_version=opset_version,
+            do_constant_folding=True,
+            input_names=['board_input'],
+            output_names=['policy_logits', 'value']
+        )
+        return path
+    except Exception as e:
+        tmp_path = os.path.join('/tmp', os.path.basename(path))
+        print(f"⚠️ Could not export ONNX to {path} ({e}). Exporting to {tmp_path}")
+        torch.onnx.export(
+            model,
+            dummy_input,
+            tmp_path,
+            export_params=True,
+            opset_version=opset_version,
+            do_constant_folding=True,
+            input_names=['board_input'],
+            output_names=['policy_logits', 'value']
+        )
+        return tmp_path
+
 def train_ppo():
     parser = argparse.ArgumentParser(description="PPO Reinforcement Learning for Battleship Neural Bot")
-    parser.add_argument("--total-games", type=int, default=100000, help="Total games to simulate (100,000)")
-    parser.add_argument("--num-envs", type=int, default=256, help="Number of parallel environments on GPU")
-    parser.add_argument("--rollout-steps", type=int, default=32, help="Steps per environment per rollout")
+    parser.add_argument("--total-games", type=int, default=25000, help="Total games to simulate (25,000)")
+    parser.add_argument("--num-envs", type=int, default=32, help="Number of parallel environments on CPU/GPU")
+    parser.add_argument("--rollout-steps", type=int, default=16, help="Steps per environment per rollout")
     parser.add_argument("--base-weights", type=str, default=os.path.join(DATA_DIR, "sherlock_nn_best.pth"))
+    parser.add_argument("--output-dir", type=str, default=DATA_DIR, help="Directory to save weights and checkpoints")
     parser.add_argument("--lr", type=float, default=1e-4, help="PPO learning rate")
-    parser.add_argument("--gamma", type=float, default=0.99, help="Discount factor")
+    parser.add_argument("--gamma", type=float, default=0.98, help="Discount factor")
     parser.add_argument("--gae-lambda", type=float, default=0.95, help="GAE lambda")
     parser.add_argument("--clip-eps", type=float, default=0.2, help="PPO surrogate clipping epsilon")
     parser.add_argument("--entropy-coef", type=float, default=0.005, help="Entropy bonus coefficient")
     parser.add_argument("--value-coef", type=float, default=0.5, help="Value loss coefficient")
-    parser.add_argument("--update-epochs", type=int, default=4, help="PPO update epochs per rollout")
-    parser.add_argument("--minibatch-size", type=int, default=1024, help="PPO mini-batch size")
-    parser.add_argument("--eval-interval-games", type=int, default=10000, help="Games between evaluation telemetry")
+    parser.add_argument("--update-epochs", type=int, default=2, help="PPO update epochs per rollout")
+    parser.add_argument("--minibatch-size", type=int, default=128, help="PPO mini-batch size")
+    parser.add_argument("--eval-interval-games", type=int, default=1000, help="Games between evaluation telemetry")
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -109,7 +155,7 @@ def train_ppo():
         base_state = torch.load(args.base_weights, map_location=device)
         missing_keys, unexpected_keys = model.load_state_dict(base_state, strict=False)
         print(f"✅ Successfully warm-started Actor policy from {args.base_weights}")
-        print(f"   (Initialized Critic value head from scratch)")
+        print(f"   (Loaded stem, res_layers, occupancy_head, and policy_head; initialized Critic value_head)")
     else:
         print("⚠️ Base weights not found! Training Actor-Critic from scratch.")
 
@@ -127,11 +173,14 @@ def train_ppo():
     values_buffer = torch.zeros((T, N), dtype=torch.float32, device=device)
 
     total_games_completed = 0
-    recent_game_shots = deque(maxlen=10000)
+    recent_game_shots = deque(maxlen=5000)
+    recent_game_baselines = deque(maxlen=5000)
+    recent_game_regrets = deque(maxlen=5000)
     best_avg_shots = float('inf')
+    best_regret = float('-inf')
 
-    output_weights_path = os.path.join(DATA_DIR, "moriarty_rl_best.pth")
-    checkpoint_path = os.path.join(DATA_DIR, "moriarty_rl_checkpoint.pth")
+    output_weights_path = os.path.join(args.output_dir, "moriarty_rl_best.pth")
+    checkpoint_path = os.path.join(args.output_dir, "moriarty_rl_checkpoint.pth")
 
     start_time = time.time()
     next_eval_milestone = args.eval_interval_games
@@ -162,6 +211,8 @@ def train_ppo():
             for g_info in completed:
                 total_games_completed += 1
                 recent_game_shots.append(g_info['total_shots'])
+                recent_game_baselines.append(g_info['baseline_shots'])
+                recent_game_regrets.append(g_info['regret'])
 
         # Compute GAE (Generalized Advantage Estimation)
         with torch.no_grad():
@@ -241,47 +292,44 @@ def train_ppo():
             games_per_sec = total_games_completed / elapsed if elapsed > 0 else 0
 
             rolling_avg = np.mean(recent_game_shots) if recent_game_shots else 0.0
-            rolling_median = np.median(recent_game_shots) if recent_game_shots else 0.0
+            rolling_baseline = np.mean(recent_game_baselines) if recent_game_baselines else 0.0
+            rolling_regret = np.mean(recent_game_regrets) if recent_game_regrets else 0.0
+            beat_baseline_pct = (np.mean([r > 0 for r in recent_game_regrets]) * 100) if recent_game_regrets else 0.0
 
-            print(f"[{total_games_completed:7,d} / {args.total_games:,} Games] "
-                  f"({elapsed:.1f}s | {games_per_sec:,.0f} games/s) | "
-                  f"Rolling Avg: {rolling_avg:.2f} shots | Median: {rolling_median:.1f} | "
-                  f"PG Loss: {pg_loss.item():.4f} | V Loss: {v_loss.item():.4f}")
+            print(f"[{total_games_completed:6,d} / {args.total_games:,} Games] "
+                  f"({elapsed:.1f}s | {games_per_sec:,.0f} g/s) | "
+                  f"Agent: {rolling_avg:.2f} | Base: {rolling_baseline:.2f} | "
+                  f"Regret: {rolling_regret:+.2f} ({beat_baseline_pct:.1f}% beat) | "
+                  f"PG: {pg_loss.item():.4f} | V: {v_loss.item():.4f}")
 
             # Save checkpoint
-            torch.save(model.state_dict(), checkpoint_path)
+            checkpoint_path = safe_save(model, checkpoint_path)
 
-            if rolling_avg < best_avg_shots and len(recent_game_shots) >= 5000:
+            if rolling_avg < best_avg_shots and len(recent_game_shots) >= 1000:
                 best_avg_shots = rolling_avg
-                torch.save(model.state_dict(), output_weights_path)
-                print(f"  -> ⭐ Saved New Best RL Model to {output_weights_path} ({rolling_avg:.2f} avg shots)")
+                best_regret = rolling_regret
+                output_weights_path = safe_save(model, output_weights_path)
+                print(f"  -> ⭐ Saved New Best RL Model to {output_weights_path} "
+                      f"(Avg: {rolling_avg:.2f} shots | Regret: {rolling_regret:+.2f})")
 
     print("\n" + "=" * 70)
     print(f"🏆 PPO REINFORCEMENT LEARNING COMPLETE! ({total_games_completed:,} Games)")
-    print(f"   Best Rolling Avg Shots: {best_avg_shots:.2f}")
-    print(f"   Final Saved Weights   : {output_weights_path}")
+    print(f"   Best Rolling Avg Shots : {best_avg_shots:.2f}")
+    print(f"   Best Rolling Regret    : {best_regret:+.2f}")
+    print(f"   Final Saved Weights    : {output_weights_path}")
     print("=" * 70)
 
     # Save final best if not yet saved
     if not os.path.exists(output_weights_path):
-        torch.save(model.state_dict(), output_weights_path)
+        output_weights_path = safe_save(model, output_weights_path)
 
     # Export ONNX model
-    onnx_path = os.path.join(DATA_DIR, "moriarty_rl.onnx")
+    onnx_path = os.path.join(args.output_dir, "moriarty_rl.onnx")
     print(f"Exporting RL ONNX model to {onnx_path}...")
     try:
         model.eval()
         dummy_input = torch.randn(1, 4, 10, 10, device=device)
-        torch.onnx.export(
-            model,
-            dummy_input,
-            onnx_path,
-            export_params=True,
-            opset_version=18,
-            do_constant_folding=True,
-            input_names=['board_input'],
-            output_names=['policy_logits', 'value']
-        )
+        onnx_path = safe_onnx_export(model, dummy_input, onnx_path, opset_version=18)
         print(f"✅ Successfully exported RL ONNX model to {onnx_path}")
     except Exception as e:
         print(f"Warning during ONNX export: {e}")

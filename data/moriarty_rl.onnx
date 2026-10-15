@@ -1,5 +1,5 @@
 
-pytorch2.14.1+cu130:ü
+pytorch2.14.1+cu130:Ï
 è
 board_input
 stem.0.weight
@@ -15,7 +15,7 @@
 pkg.torch.onnx.class_hierarchy¨['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']J 
 pkg.torch.onnx.fx_node…%_native_batch_norm_legit_no_training : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d, %p_stem_1_weight, %p_stem_1_bias, %b_stem_1_running_mean, %b_stem_1_running_var, 0.1, 1e-05), kwargs = {})J\
 pkg.torch.onnx.name_scopes>['', 'stem', 'stem.1', '_native_batch_norm_legit_no_training']J½
-pkg.torch.onnx.stack_traceFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 58, in forward
+pkg.torch.onnx.stack_traceFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 65, in forward
     features = self.stem(x)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -29,7 +29,7 @@ leaky_relunode_leaky_relu"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J”
 pkg.torch.onnx.fx_nodez%leaky_relu : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem, 0.1), kwargs = {})JB
 pkg.torch.onnx.name_scopes$['', 'stem', 'stem.2', 'leaky_relu']Jç
-pkg.torch.onnx.stack_traceÈFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 58, in forward
+pkg.torch.onnx.stack_traceÈFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 65, in forward
     features = self.stem(x)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -51,7 +51,7 @@ leaky_relu
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_1 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_1, %p_res_layers_0_bn1_weight, %p_res_layers_0_bn1_bias, %b_res_layers_0_bn1_running_mean, %b_res_layers_0_bn1_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.0', 'res_layers.0.bn1', '_native_batch_norm_legit_no_training_1']JÎ
-pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -66,7 +66,7 @@ leaky_relu
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J˜
 pkg.torch.onnx.fx_node~%leaky_relu_1 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_3, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.0', 'res_layers.0.relu', 'leaky_relu_1']Jø
-pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -89,7 +89,7 @@ leaky_relu
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_2 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_2, %p_res_layers_0_bn2_weight, %p_res_layers_0_bn2_bias, %b_res_layers_0_bn2_running_mean, %b_res_layers_0_bn2_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.0', 'res_layers.0.bn2', '_native_batch_norm_legit_no_training_2']JÅ
-pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -105,7 +105,7 @@ leaky_reluaddnode_add"AddJ£
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'aten.add.Tensor']J
 pkg.torch.onnx.fx_nodeu%add : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%getitem_6, %leaky_relu), kwargs = {})JG
 pkg.torch.onnx.name_scopes)['', 'res_layers', 'res_layers.0', 'add']Jœ
-pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -119,7 +119,7 @@ leaky_reluaddnode_add"AddJ£
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J’
 pkg.torch.onnx.fx_nodex%leaky_relu_2 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%add, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.0', 'res_layers.0.relu', 'leaky_relu_2']Jå
-pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -142,7 +142,7 @@ leaky_reluaddnode_add"AddJ£
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_3 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_3, %p_res_layers_1_bn1_weight, %p_res_layers_1_bn1_bias, %b_res_layers_1_bn1_running_mean, %b_res_layers_1_bn1_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.1', 'res_layers.1.bn1', '_native_batch_norm_legit_no_training_3']JÎ
-pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -157,7 +157,7 @@ leaky_reluaddnode_add"AddJ£
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J˜
 pkg.torch.onnx.fx_node~%leaky_relu_3 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_9, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.1', 'res_layers.1.relu', 'leaky_relu_3']Jø
-pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -181,7 +181,7 @@ getitem_12node_Conv_81"Conv*
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_4 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_4, %p_res_layers_1_bn2_weight, %p_res_layers_1_bn2_bias, %b_res_layers_1_bn2_running_mean, %b_res_layers_1_bn2_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.1', 'res_layers.1.bn2', '_native_batch_norm_legit_no_training_4']JÅ
-pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -198,7 +198,7 @@ node_add_1"AddJ¥
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'aten.add.Tensor']J”
 pkg.torch.onnx.fx_nodez%add_1 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%getitem_12, %leaky_relu_2), kwargs = {})JI
 pkg.torch.onnx.name_scopes+['', 'res_layers', 'res_layers.1', 'add_1']Jœ
-pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -212,7 +212,7 @@ node_add_1"AddJ¥
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J”
 pkg.torch.onnx.fx_nodez%leaky_relu_4 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%add_1, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.1', 'res_layers.1.relu', 'leaky_relu_4']Jå
-pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -236,7 +236,7 @@ getitem_15node_Conv_82"Conv*
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_5 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_5, %p_res_layers_2_bn1_weight, %p_res_layers_2_bn1_bias, %b_res_layers_2_bn1_running_mean, %b_res_layers_2_bn1_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.2', 'res_layers.2.bn1', '_native_batch_norm_legit_no_training_5']JÎ
-pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -252,7 +252,7 @@ getitem_15leaky_relu_5node_leaky_relu_5"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J™
 pkg.torch.onnx.fx_node%leaky_relu_5 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_15, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.2', 'res_layers.2.relu', 'leaky_relu_5']Jø
-pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -276,7 +276,7 @@ getitem_18node_Conv_83"Conv*
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_6 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_6, %p_res_layers_2_bn2_weight, %p_res_layers_2_bn2_bias, %b_res_layers_2_bn2_running_mean, %b_res_layers_2_bn2_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.2', 'res_layers.2.bn2', '_native_batch_norm_legit_no_training_6']JÅ
-pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -293,7 +293,7 @@ node_add_2"AddJ¥
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'aten.add.Tensor']J”
 pkg.torch.onnx.fx_nodez%add_2 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%getitem_18, %leaky_relu_4), kwargs = {})JI
 pkg.torch.onnx.name_scopes+['', 'res_layers', 'res_layers.2', 'add_2']Jœ
-pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -307,7 +307,7 @@ node_add_2"AddJ¥
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J”
 pkg.torch.onnx.fx_nodez%leaky_relu_6 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%add_2, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.2', 'res_layers.2.relu', 'leaky_relu_6']Jå
-pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -331,7 +331,7 @@ getitem_21node_Conv_84"Conv*
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_7 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_7, %p_res_layers_3_bn1_weight, %p_res_layers_3_bn1_bias, %b_res_layers_3_bn1_running_mean, %b_res_layers_3_bn1_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.3', 'res_layers.3.bn1', '_native_batch_norm_legit_no_training_7']JÎ
-pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¯File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -347,7 +347,7 @@ getitem_21leaky_relu_7node_leaky_relu_7"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J™
 pkg.torch.onnx.fx_node%leaky_relu_7 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_21, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.3', 'res_layers.3.relu', 'leaky_relu_7']Jø
-pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÙFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -371,7 +371,7 @@ getitem_24node_Conv_85"Conv*
 pkg.torch.onnx.class_hierarchyÍ['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÌ
 pkg.torch.onnx.fx_node±%_native_batch_norm_legit_no_training_8 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_8, %p_res_layers_3_bn2_weight, %p_res_layers_3_bn2_bias, %b_res_layers_3_bn2_running_mean, %b_res_layers_3_bn2_running_var, 0.1, 1e-05), kwargs = {})J~
 pkg.torch.onnx.name_scopes`['', 'res_layers', 'res_layers.3', 'res_layers.3.bn2', '_native_batch_norm_legit_no_training_8']JÅ
-pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_trace¦File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -388,7 +388,7 @@ node_add_3"AddJ¥
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'aten.add.Tensor']J”
 pkg.torch.onnx.fx_nodez%add_3 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%getitem_24, %leaky_relu_6), kwargs = {})JI
 pkg.torch.onnx.name_scopes+['', 'res_layers', 'res_layers.3', 'add_3']Jœ
-pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceıFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -402,7 +402,7 @@ node_add_3"AddJ¥
 pkg.torch.onnx.class_hierarchy²['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'ml.train_sherlock_nn.ResConvBlock', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J”
 pkg.torch.onnx.fx_nodez%leaky_relu_8 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%add_3, 0.1), kwargs = {})Je
 pkg.torch.onnx.name_scopesG['', 'res_layers', 'res_layers.3', 'res_layers.3.relu', 'leaky_relu_8']Jå
-pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 59, in forward
+pkg.torch.onnx.stack_traceÆFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 66, in forward
     features = self.res_layers(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -426,7 +426,7 @@ getitem_27node_Conv_86"Conv*
 pkg.torch.onnx.class_hierarchy¨['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']JÀ
 pkg.torch.onnx.fx_node¥%_native_batch_norm_legit_no_training_9 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_9, %p_policy_head_1_weight, %p_policy_head_1_bias, %b_policy_head_1_running_mean, %b_policy_head_1_running_var, 0.1, 1e-05), kwargs = {})Jl
 pkg.torch.onnx.name_scopesN['', 'policy_head', 'policy_head.1', '_native_batch_norm_legit_no_training_9']JĞ
-pkg.torch.onnx.stack_trace±File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 60, in forward
+pkg.torch.onnx.stack_trace±File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 67, in forward
     policy_logits = self.policy_head(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -440,7 +440,7 @@ getitem_27leaky_relu_9node_leaky_relu_9"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J™
 pkg.torch.onnx.fx_node%leaky_relu_9 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_27, 0.1), kwargs = {})JR
 pkg.torch.onnx.name_scopes4['', 'policy_head', 'policy_head.2', 'leaky_relu_9']Jú
-pkg.torch.onnx.stack_traceÛFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 60, in forward
+pkg.torch.onnx.stack_traceÛFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 67, in forward
     policy_logits = self.policy_head(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -454,7 +454,7 @@ getitem_27leaky_relu_9node_leaky_relu_9"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy€['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.linear.Linear', 'aten.view.default']J•
 pkg.torch.onnx.fx_node{%view_1 : [num_users=1] = call_function[target=torch.ops.aten.view.default](args = (%leaky_relu_9, [1, 3200]), kwargs = {})JL
 pkg.torch.onnx.name_scopes.['', 'policy_head', 'policy_head.4', 'view_1']Jë
-pkg.torch.onnx.stack_traceÌFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 60, in forward
+pkg.torch.onnx.stack_traceÌFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 67, in forward
     policy_logits = self.policy_head(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -472,7 +472,7 @@ getitem_27leaky_relu_9node_leaky_relu_9"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy‚['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J·
 pkg.torch.onnx.fx_nodeœ%linear : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%view_1, %p_policy_head_4_weight, %p_policy_head_4_bias), kwargs = {})JL
 pkg.torch.onnx.name_scopes.['', 'policy_head', 'policy_head.4', 'linear']Jç
-pkg.torch.onnx.stack_traceÈFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 60, in forward
+pkg.torch.onnx.stack_traceÈFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 67, in forward
     policy_logits = self.policy_head(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -485,7 +485,7 @@ getitem_27leaky_relu_9node_leaky_relu_9"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J–
 pkg.torch.onnx.fx_node|%leaky_relu_10 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%linear, 0.1), kwargs = {})JS
 pkg.torch.onnx.name_scopes5['', 'policy_head', 'policy_head.5', 'leaky_relu_10']Jú
-pkg.torch.onnx.stack_traceÛFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 60, in forward
+pkg.torch.onnx.stack_traceÛFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 67, in forward
     policy_logits = self.policy_head(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -503,7 +503,7 @@ getitem_27leaky_relu_9node_leaky_relu_9"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy‚['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.linear.Linear', 'aten.linear.default']JÀ
 pkg.torch.onnx.fx_node¥%linear_1 : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%leaky_relu_10, %p_policy_head_6_weight, %p_policy_head_6_bias), kwargs = {})JN
 pkg.torch.onnx.name_scopes0['', 'policy_head', 'policy_head.6', 'linear_1']Jç
-pkg.torch.onnx.stack_traceÈFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 60, in forward
+pkg.torch.onnx.stack_traceÈFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 67, in forward
     policy_logits = self.policy_head(features)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -525,7 +525,7 @@ getitem_30node_Conv_87"Conv*
 pkg.torch.onnx.class_hierarchy¨['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_no_training.default']J¾
 pkg.torch.onnx.fx_node£%_native_batch_norm_legit_no_training_10 : [num_users=1] = call_function[target=torch.ops.aten._native_batch_norm_legit_no_training.default](args = (%conv2d_10, %p_value_head_1_weight, %p_value_head_1_bias, %b_value_head_1_running_mean, %b_value_head_1_running_var, 0.1, 1e-05), kwargs = {})Jk
 pkg.torch.onnx.name_scopesM['', 'value_head', 'value_head.1', '_native_batch_norm_legit_no_training_10']JÔ
-pkg.torch.onnx.stack_traceµFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_traceµFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -539,7 +539,7 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J›
 pkg.torch.onnx.fx_node€%leaky_relu_11 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_30, 0.1), kwargs = {})JQ
 pkg.torch.onnx.name_scopes3['', 'value_head', 'value_head.2', 'leaky_relu_11']Jş
-pkg.torch.onnx.stack_traceßFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_traceßFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -553,7 +553,7 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy€['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.linear.Linear', 'aten.view.default']J–
 pkg.torch.onnx.fx_node|%view_3 : [num_users=1] = call_function[target=torch.ops.aten.view.default](args = (%leaky_relu_11, [1, 1600]), kwargs = {})JJ
 pkg.torch.onnx.name_scopes,['', 'value_head', 'value_head.4', 'view_3']Jï
-pkg.torch.onnx.stack_traceĞFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_traceĞFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -571,7 +571,7 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy‚['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J·
 pkg.torch.onnx.fx_nodeœ%linear_2 : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%view_3, %p_value_head_4_weight, %p_value_head_4_bias), kwargs = {})JL
 pkg.torch.onnx.name_scopes.['', 'value_head', 'value_head.4', 'linear_2']Jë
-pkg.torch.onnx.stack_traceÌFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_traceÌFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -584,7 +584,7 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']J˜
 pkg.torch.onnx.fx_node~%leaky_relu_12 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%linear_2, 0.1), kwargs = {})JQ
 pkg.torch.onnx.name_scopes3['', 'value_head', 'value_head.5', 'leaky_relu_12']Jş
-pkg.torch.onnx.stack_traceßFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_traceßFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -602,7 +602,7 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy‚['__main__.SherlockActorCritic', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J¾
 pkg.torch.onnx.fx_node£%linear_3 : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%leaky_relu_12, %p_value_head_6_weight, %p_value_head_6_bias), kwargs = {})JL
 pkg.torch.onnx.name_scopes.['', 'value_head', 'value_head.6', 'linear_3']Jë
-pkg.torch.onnx.stack_traceÌFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_traceÌFile "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
   File "/home/khan8/Work/battleship-bots/venv/lib/python3.14/site-packages/torch/nn/modules/container.py", line 259, in forward
     input = module(input)
@@ -615,44 +615,45 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 pkg.torch.onnx.class_hierarchy4['__main__.SherlockActorCritic', 'aten.squeeze.dim']JŠ
 pkg.torch.onnx.fx_nodep%squeeze : [num_users=1] = call_function[target=torch.ops.aten.squeeze.dim](args = (%linear_3, -1), kwargs = {})J-
 pkg.torch.onnx.name_scopes['', 'squeeze']J¡
-pkg.torch.onnx.stack_trace‚File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 61, in forward
+pkg.torch.onnx.stack_trace‚File "/home/khan8/Work/battleship-bots/ml/train_ppo_rl.py", line 68, in forward
     values = self.value_head(features).squeeze(-1)
 main_graph*^@Bstem.0.weightj!
 locationmoriarty_rl.onnx.dataj
 offset6544j
-length9216p*”@Bstem.0.biasJ€è?B>Óg?$Ô6?üB=i>}@?V“=Œ%G?€Ÿ=?Ü–Ô>:à„?ã²= F>´9ü>¬ >Ç21?™>ğ½.Y> H,?S±ë>ïà˜¿Ì¤¨?~ü=ºÃ¾û¿ì¢†?åŞœ=N8-¾È­¾JTO=IÃ`¾˜ß-¿3”¼>ˆ5?ò}3?·ø?Ú7°>ó4¿åæg¾.Š¾Ø>Àñˆ=Ãæõ¾¦´>›¯ª?]Ñ€? È¾êÍÙ½Îğè>Ÿ°Œ>=ÊÃ>Jè´¾0â?t¨¦>h€e½1s½ÂãĞ½º”=€Ä¼¥z>>ÖÑÑ¾‡¡ƒ?Ìªd>*n@@Bres_layers.0.conv1.weightj!
+length9216p*”@Bstem.0.biasJ€¼Iè=<M?QD3?0>½Âµ‰½†ŠŒ?èÕœ¾sp?Hm?à?Ò]?wm>bµÊ>`Ú?~Y6>Æ½f?˜Ê?ú6±½Ê#?w+?ZÙò>¸€¿ğ-Ì?È_ş>qc ¿Ÿ…¿¦‘“?ˆP~¾³'>m*a¾×\	?è¾h¾`¿ìXµ>ÒÒj?eã+?)@:‰¶>¢:¿û…?> xÔ9£^¤>#±¾÷T(¿zªB>H?N·‚?Oò¾$Š ?°v?N~_>~p>¤‹ö¾öİ{½"‹¼ùP=³U ¾ÏC5¾Ç+E>`j>`ÇºÓÌ¾!©š?(>*n@@Bres_layers.0.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset191888j
-length147456p* @Bres_layers.0.conv1.biasJ€Û=>9	?œn¾§¾4’2?à]@?¬C?‡Â+?áJ¾ÚŒH> t¾•p«½´ßÛ¾Bo?Vó>j{½¾Ô©®¾®’+>®”.¾bç¾äµ?¨¦V?\I,=ºÉœ=8>>­Ñ¿ş|>V]=°ìü>T54>Š¾ˆ¥F?À¨e¾8¿Î½GŠ$¿óä>ÀP¾l3]?2@J¿BO¿(ˆ>Ægš¾‡•¾e9p?(´¾z%Ç?¨­¤? .Ü:ğ°A?Iµ>º2¡>˜]á>èZe¾N+6¿äŸ ¿‰9¾}Á>—=ìÑ‹¾Î„>Á¿¾dT¢¾şK¿*n@@Bres_layers.0.conv2.weightj!
+length147456p* @Bres_layers.0.conv1.biasJ€÷k>×S>2z5¾vm¾BØ?ò?t­?‰N?àFˆ=ÎW>†ky¾ ¸5=Ñ¯Ç¾ïš\?`çn>¾€¿à¾Ø3v>)ÀW¾¸¿Sƒ?ñA9?óÑ<øàô< Úƒ=µ>	Ö¾†Ğ=ß÷¼"À> ÷¾¶)½ÎIØ>:‹¾Ìz>u¿4&?¢6Æ½fy?CW¿½B¿¶n>`aî½¿««¾üÛ”?RAô¾şê¢?ølO?å¾î]¹>ôäß>¼%³>ŞÜ?¼×¾Ô+¿ÅÎ¿8W½ÚŒ>|Á1>mé¾Ê
+>²›¾ É6¾ZZ¿*n@@Bres_layers.0.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset339344j
-length147456p* @Bres_layers.0.conv2.biasJ€š"ï¾ÉyÂ=şÂ¬>AÜ¾¦¿¾ü2¾e¥n¿0(‹>Iâ'¿Héí<’¾')?<¥W>p:“> ¨½º}Ó¾„D¿ìã>/&"?´Eï<bĞr>L^Z>MU?c™¿>È¨ø=^v¿Ñ×¹>P?ÜÉ> »¢;æYÿ½à@ö<?^¾PR =è¸->¾{¿°¿Ú¿Xœ.>&#¿U\€?nòÏ>fi/¾==|Ã= Ì¾ğN4?tI+½š&>5–"?~E×¾ş¸™¾Ld¾XC¾ıo¿¤ƒÄ¿Š¿|jÀ>èHÖ¼‰Òd¿ZÂÓ>ÂBD¿CŞo¿5O·>*n@@Bres_layers.1.conv1.weightj!
+length147456p* @Bres_layers.0.conv2.biasJ€¾`Yé=Bi>„u¾Òê]¾0v%½t¿nz>X.¿Ô³=ôE¡¾<•&?ıø¬>q¶3>Ä½V–¿”ô¿ª|>,V,?hhY<}Ù‹>³it>ˆÀ>¦ßú> ÷`=8½l¿È“>ÓÇÒ>Pí“>ª÷W½ŠVÁ½€õª<ÔŸî½@KC=°B¾rn¿À7°¿’’Å¾ÙÜg>J}¿×l?Ş2¡>Êé•½àDM¼„¸=‰Åµ¾LÒ?š®½˜f!>,õ>gªÌ¾•ŸÀ¾ø¦?¾¾W ¾®p!¿uÕ¶¿°³¿ß‰>)†½H:¿Ø)¡>„ëB¿<^L¿êf•>*n@@Bres_layers.1.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset486800j
-length147456p* @Bres_layers.1.conv1.biasJ€ŠÚV¾.¿&E=`y1=H?Äğ½½Š>‘¾à¦^>lÇ¿¿Ÿ?S° ¿j{ğ¿‚ä5¾@v½ c¿çè=l‡°¾êBC?äò&¾Œ#¿8Ú¾Ì¿²>jZH¾5|€¾Üæ~>ãŒ¿ /¿£B¾ÎC+¾¢3¿”K
-¾•=t¿d.¾~b½ß¿&Öš>>à'Ğ»¢¸Ñ=Êwi¿M+?‰ôK>Ì'?°l…=¹=¸P€¿CÔ¿Rj¿š¢¾T_@¾#7?²÷>eJ>ê[¿°z¾ÂıŠ>nId¿@Y¾F#¿ln¾Ø“V½r†Ô¾§«¿*n@@Bres_layers.1.conv2.weightj!
+length147456p* @Bres_layers.1.conv1.biasJ€–Z¾¿@Ù’<S€¼ŞÌ?4ñ—½œ©ƒ¾VÇJ>@’ê¾üs,?¸Šİ¾‚ÇÀ„‚¾ü4“½½²¾¾\”¼ÌÓÚ¾8+:?P½ß­Ú¾ÜŞH¾Õ¨¿'ß“>°—à<±Ot¾ÖæÅ>š˜(¿”<G¿86½]ÉI¾gp.¿°M¯¾*|¿lÏÓ½¼›=11¿g±Ç>h->´Ç=°Ü¼äj¿£7?F‘>áü>úœ*¾R?—=0õQ¿š¹¿È—~¿¤ô©¾ óà½Ö:?HÖì>ÏHÅ=kh¿¸½d¾É>*Av¿FÌ¾?
+¿æ“¾w¾ù¢ó¾„°«¿*n@@Bres_layers.1.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset634256j
-length147456p* @Bres_layers.1.conv2.biasJ€ç—Ø¿@¤<ìj?Sğ,?ò"Z¾Ò4e¿#Lƒ¿öÉL>ğW¿»ë;¾ö«„>¢®¾·¼"ü¾ğ¾J¹Æ¿X`¾Ùp«¿0?|ŠJ¾,l£¾ N¬¾¿H:‡¾Å ?ß‡¾Ú]>À!0¿¨?=0Aà¼ù²!?œĞ‘>Ik¿.Ï¼ø£¾K{„¿ŒêC¿áû…¿º–¿À|¦=¢ï+¿€¨¬»’U¾²ø…¿Ÿªl¾ ªE<èô½€¿";v×>pÂ›=\ğ¾€9£¾ôš¾@zá< úä<¼.¹¾v²ä¾<qH>¾ZQ¿Ã›s¿Ì†Œ=ñJ¿Á…U¿¿6¿*n@@Bres_layers.2.conv1.weightj!
+length147456p* @Bres_layers.1.conv2.biasJ€>zÂ¿65¤½ÑçP?‡1<?¹ÈÑ¾æ¿b¿]X¿Øí3>vÍî¾U=¾¼k•>œŠ‹½<º=Œ6ü¾0d¾ÙSÁ¿ˆ¡¾äú™¿Ø}.?Çò&¾”} ¾L‹¾&[„¿yÒ¾Lãî>Èa¾úe1>ô¡R¿€iÿ¼ å½|ú-?0Ö(>ñ¿˜_d½î®¾;Òƒ¿b¿ûrd¿[•¿À7Z½lê(¿¶²á½âg¾i6[¿v¾ÂÀ½=¥O¾Ú½ğÁ<˜5½÷+¾øÍ•¾™€¾ ½À½Èw€¾:Ã¿¬á>Šóe¿XPÛ¾­l½V=¿†\¿8b¿*n@@Bres_layers.2.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset781712j
-length147456p* @Bres_layers.2.conv1.biasJ€®4ø>¦1¿[¢ì¿ ï;Œ½Ìp³¿\ºµ=¥5>P?òÊu¾[I¡¿:`á¾: Ğ>!­¿mI?7«„¾®´¾
-û¾x‘ş>nx?.#o¾\¦Ş>¿ºı‰¿4>
-Û¿V¾¸¾¸¿İ¢¿š„¿v¿Ğ”™¾`b>_I¿2ö\?õ­¿Qà4>dşm¾ôıú>¤vÜ¿ê#¾ŠÆ¿%½¾aoÙ¾` š<„N0¿Ü¼Â¾h
-;½Î]?ç4 ¿@Üy=È€?ìyF¿ºÔ¼¿šW¿p:¿j™¾X³½PMt¾g‹¢¾ìs¿œõg¾26Í>¡âd¿*n@@Bres_layers.2.conv2.weightj!
+length147456p* @Bres_layers.2.conv1.biasJ€š£š>>I`¿;^õ¿Ä¸£>I¾TÈ¿ ¡¼=jd>R?ƒ¾_¾’ï¿dÓ¾"¤ª>Û¿Êy?¸Ğö½Èµ·¾¨Ğ°¾€Pâ>ôÂ¼>¸ê6¾ª#?v"y¿¡S¨¿˜M=§Æ¿z{ç¾â ¿.æ¢¿*‚‚¿•A
+¿¤eB¾^«¥>“Ü¾?'u»¿zç&>˜Î¾:Ş?‰uã¿½3¢¾r/ù¾*GÂ¾ôgú¾[½äa@¿„êí¾âÔã=ä'Q?úË0¿A|>Mk?‚’)¿ˆß¿Ik¿Ÿ}0¿È‹½Ò¾©ÖÍ¾ıI©¾f j¿àÊõ=~÷>ÅKn¿*n@@Bres_layers.2.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset929168j
-length147456p* @Bres_layers.2.conv2.biasJ€—	»¿~…?êÔ>ôùB½ö¿~V(¿â	Å>¼K¿NWÿ¾óì½Ğh\¿°TÄ¾¾&>Øçl>@Q¿8>¶ß?úù¾à[c¼ŞÇ·=¢a?õü>ãZ#?d$½äe<>¬š2¾ˆÉA>¼\>¾DÍ¤>n\=¾Ú!¾oã1¿šúÄ¾ÌÊç><]™>9‚Å¾(wm¾ÆR¾£Ø?ÅNœ¿³Ï=¿}x>4ÿØ=µ¾=Rm>€X½N?3¾¿‡K>”NX¾"Nr>ò}$¿¿™½Êõñ>FA¾ Š¾Hê/¿’æÅ¾€n=4×h>PM¾ÀÙ·»øi¾wé›¿*o@@Bres_layers.3.conv1.weightj!
+length147456p* @Bres_layers.2.conv2.biasJ€ƒi‘¿ï’>•‡§> Tã<h¨&¿P›¿L‘{>@ïL¿›[‘¾ W·½Æì;¿’‘¾œ-•>ö#\>h{j¿\²‹>ÿóx?Ÿ½œw>”ˆ#=ş?à5>(_?Â½û”p=	–½àaó=ı¾t†>Œdt¾@¯ ¾AiZ¿çê¾lGÏ>VyÂ>Œ‚Ş¾ŸuS¾ˆ½=ÎŠè>f÷¿Ví=¿ Ù|½4øü=àØx>›—>>,5¯½\°?›.Ü¾(æö=Œ( ¾–çÎ>
+¿ì½¹?bÀ¾LŞ¾8šu¾ %ğ¾`,<º>`ß•½@àÀ¼ÌDÊ½–¼ú¿*o@@Bres_layers.3.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset1076624j
-length147456p* @Bres_layers.3.conv1.biasJ€' ë¾Ì¬—½¿øÈ¾PlÒ¾ë¿€VÓ½ùı/?ÙÀ ˜c¿­9€¿Ö[¿œ?7¿@ç<>•£¿¨2â¼0ãp>ğG)¿mS_¾İ6¿Ú¯’¿êQ¾8v(?ìø?„2ì¾æ×ú> ˜ ;M?X¬>³«>Ì3¶½„¬=ñ.½Êe'¿+vª¿„Ğ2¿²$ ¿.K¿îª¾¾b
-¿Z8`¿°i­¾>ŠÕ½ª:¿f5D¾bİ)¾Ä#½œÖ=Z¿ã¾Î±…>…íO?ş ¿ ·= ±¼pë¾¼@ûÄ¼êD¿<½9¾¾õ¾F]¿¤±£¿òa#¿È£.=ÊX >Iİ	¿*o@@Bres_layers.3.conv2.weightj!
+length147456p* @Bres_layers.3.conv1.biasJ€F¹¦¾(í6½f¾¾7¿À¿K£á¾(—%?˜Ã%ÀµdT¿j¿Àf¿*7D¿Ğôr¾ØY¢¿n:Ó½¶©~>'”.¿MÏ™¾ œ#¿Ü;‡¿¬¥q¾–S*?Ü/F?X@ó¾ŞE ?´ùd¾ôò>Ø`D>X$ñ>¬‘§=ğ4Ä<N >È5¿ï•›¿ô^K¿"½/¿8·O¿€„É<D\,¿ˆbL¿Ìú¶¾ÄB½Ú8¿ĞV¾hÅ&¾ø­Ù½@<"¿Ä(j>0œâ>&ä¿°ÇY½(-C½ÀD¾¼Éò½˜aR¿vç‡¾‚Qñ¾eJ¿lS©¿u#¿ôC¦= ™*>	¿*o@@Bres_layers.3.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset1224080j
-length147456p* @Bres_layers.3.conv2.biasJ€²dÈ¾:+?èGY?XG¿|¡>ÀªL>b ï>b ¿ûz—>^!+=½õü¿ZÒ¿—p¿÷yê> _u?4T*>½‡‘>ş]Y?ìS ?¡>6VÀ?Üó]?ÿ™=Õ¡ >ñÉ6?DËû=€BN<jÀÚ¾ãÿ>ò´?ÌCv¾kjò>(“¡¾ıã“?ÑÁn?zñ°>Z$?«;?†F^?"vã¾s×¿h¹±>ò$C>B¬#?¨¿?Ôç½ÀbB>W?êú´¾7ªÙ¾YÙ¿çYj¾ª^è>-Hó>ĞÒñ¾‚š¿èçÊ¿Ü{p¾vm?è'E?F¡9>gÌÀ>¾Gü˜?*g @Bpolicy_head.0.weightj!
+length147456p* @Bres_layers.3.conv2.biasJ€Dh»¾Ç5?ß5N?]¿´ià>BIŒ>2ÍŞ>Ö{M¿mt.?B<ˆ=~À‰$ÿ¾Ğ2•¿³ı?Å’?×Ì?# ?²ZŠ?ºÙ?ªç¾>ôÔÆ?a^?e>¦>ˆvM?¹Çƒ>§Ë	¾4äš¾%ŠÈ>fB?–Î)¾—æ«?€)û=¨ú‚?òåŠ?€ò‡>-1?L¤?{¿`?{
+¿¶Àj
+?Ö>åK?êz,?3¾Bƒ>bi.?ú+Â¾á†”¾@¤ç¾üe¾»?chä>´bë¾æg%¿înç¿@AW¾û=?rˆË>f˜“>{G?t09¾ûv“?*g @Bpolicy_head.0.weightj!
 locationmoriarty_rl.onnx.dataj
 offset15760j
-length73728p*› Bpolicy_head.0.biasJ€¸û¹<{s€½0y‹»ØÙ5=\O‹<jÛ=h€<ÔD=¨›Ä¼X‹+½ (½úY=€.`:Pá< ãL½ÌéM=Öé+½äZZ½D&©¼LtŒ=à2=àl?;€J<WĞ/½S.½ Û=D5s½á¼Tò¨¼,á"=@YŠº€p»;*i€€Bpolicy_head.4.weightj!
+length73728p*› Bpolicy_head.0.biasJ€Ô’W=Ñ§×¼L]Ì<oò >mş‚=:ıå<à|M<f&ƒ=H­d½P³½»z¾ =µa(>(í<4Q=©½úR”=Xím=8U¼ ó;úÚ×=à=â€J=‚²Ÿ=Æ9d½ zl=T­‘=Ôã­¼š@¼Pä‹=x›=<Î¡<”H9=*i€€Bpolicy_head.4.weightj!
 locationmoriarty_rl.onnx.dataj
 offset2228224j
 length3276800p*^€Bpolicy_head.4.biasj!
@@ -667,8 +668,7 @@ main_graph*^@Bstem.0.weightj!
 length400p*d@Bvalue_head.0.weightj!
 locationmoriarty_rl.onnx.dataj
 offset2448j
-length4096p*YBvalue_head.0.biasJ@ ı=¤bÖ¾‰ğh½i‚=VÕŠ?–üî>à?,£<¿6^>9Ê>ûÊ^?›¼?óW?¿;\–?
-TM?*g€ÀBvalue_head.4.weightj!
+length4096p*YBvalue_head.0.biasJ@üÿ>š-?ºÍ¾Mİ²¾ª3Ì>+ã‡?.-¿@øÊ>#P?à¶¾–ÃŒ¾Éš¾šš>I—½nê<ç×>*g€ÀBvalue_head.4.weightj!
 locationmoriarty_rl.onnx.dataj
 offset1371536j
 length819200p*[€Bvalue_head.4.biasj!
@@ -677,7 +677,7 @@ TM?*g€ÀBvalue_head.4.weightj!
 length512p*_€Bvalue_head.6.weightj!
 locationmoriarty_rl.onnx.dataj
 offset912j
-length512p*Bvalue_head.6.biasJRc½*Bval_65J       €      *Bval_75J       @      *Bval_76JÿÿÿÿÿÿÿÿZË
+length512p*Bvalue_head.6.biasJÛ ;*Bval_65J       €      *Bval_75J       @      *Bval_76JÿÿÿÿÿÿÿÿZË
 board_input
 
 
@@ -1125,8 +1125,8 @@ j
 linear_3
 
 
-‚°4
-0pkg.torch.export.ExportedProgram.graph_signatureû3
+‚ñ9
+0pkg.torch.export.ExportedProgram.graph_signature¼9
 # inputs
 p_stem_0_weight: PARAMETER target='stem.0.weight'
 p_stem_0_bias: PARAMETER target='stem.0.bias'
@@ -1164,6 +1164,12 @@ p_res_layers_3_conv2_weight: PARAMETER target='res_layers.3.conv2.weight'
 p_res_layers_3_conv2_bias: PARAMETER target='res_layers.3.conv2.bias'
 p_res_layers_3_bn2_weight: PARAMETER target='res_layers.3.bn2.weight'
 p_res_layers_3_bn2_bias: PARAMETER target='res_layers.3.bn2.bias'
+p_occupancy_head_0_weight: PARAMETER target='occupancy_head.0.weight'
+p_occupancy_head_0_bias: PARAMETER target='occupancy_head.0.bias'
+p_occupancy_head_1_weight: PARAMETER target='occupancy_head.1.weight'
+p_occupancy_head_1_bias: PARAMETER target='occupancy_head.1.bias'
+p_occupancy_head_3_weight: PARAMETER target='occupancy_head.3.weight'
+p_occupancy_head_3_bias: PARAMETER target='occupancy_head.3.bias'
 p_policy_head_0_weight: PARAMETER target='policy_head.0.weight'
 p_policy_head_0_bias: PARAMETER target='policy_head.0.bias'
 p_policy_head_1_weight: PARAMETER target='policy_head.1.weight'
@@ -1207,6 +1213,9 @@ b_res_layers_3_bn1_num_batches_tracked: BUFFER target='res_layers.3.bn1.num_batc
 b_res_layers_3_bn2_running_mean: BUFFER target='res_layers.3.bn2.running_mean' persistent=True
 b_res_layers_3_bn2_running_var: BUFFER target='res_layers.3.bn2.running_var' persistent=True
 b_res_layers_3_bn2_num_batches_tracked: BUFFER target='res_layers.3.bn2.num_batches_tracked' persistent=True
+b_occupancy_head_1_running_mean: BUFFER target='occupancy_head.1.running_mean' persistent=True
+b_occupancy_head_1_running_var: BUFFER target='occupancy_head.1.running_var' persistent=True
+b_occupancy_head_1_num_batches_tracked: BUFFER target='occupancy_head.1.num_batches_tracked' persistent=True
 b_policy_head_1_running_mean: BUFFER target='policy_head.1.running_mean' persistent=True
 b_policy_head_1_running_var: BUFFER target='policy_head.1.running_var' persistent=True
 b_policy_head_1_num_batches_tracked: BUFFER target='policy_head.1.num_batches_tracked' persistent=True

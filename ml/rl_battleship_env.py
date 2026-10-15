@@ -1,13 +1,42 @@
-import torch
-import numpy as np
+import os
+import sys
 import random
+import numpy as np
+import torch
 
-CELL_UNKNOWN = 0
-CELL_MISS = -1
-CELL_HIT = 1
-CELL_SUNK = 2
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
-FLEET_SIZES = [5, 4, 3, 3, 2] # 17 total pegs
+from core.game_engine import BattleshipGame, CELL_UNKNOWN, CELL_MISS, CELL_HIT, CELL_SUNK
+from bots.sherlock import SherlockBot
+
+FLEET_SIZES = [5, 4, 3, 3, 2]  # 17 total pegs
+
+def compute_sherlock_baseline(truth_board, parity_offset):
+    """
+    Computes deterministic baseline shots for SherlockBot on this exact hidden board layout.
+    Serves as the Control Variate baseline for Paired-Board Regret Minimization.
+    """
+    game = BattleshipGame()
+    for r in range(10):
+        for c in range(10):
+            val = int(truth_board[r, c])
+            game.truth_board[r][c] = val
+            if val > 0:
+                if val not in game.ship_pegs:
+                    game.ship_pegs[val] = []
+                    game.ship_health[val] = 0
+                game.ship_pegs[val].append((r, c))
+                game.ship_health[val] += 1
+
+    bot = SherlockBot()
+    bot.parity_offset = parity_offset
+    while not game.is_game_over():
+        target, _, _, _ = bot.get_best_move(game.tracking_board, game.move_history)
+        game.fire_shot(*target)
+    return game.shot_number
 
 class DecomposedBattleshipEnv:
     """
@@ -15,27 +44,43 @@ class DecomposedBattleshipEnv:
     
     Key Features:
     1. The RL Agent ONLY controls the Hunt Phase on active checkerboard parity.
-    2. Whenever a Hunt shot lands a Hit, an integrated Deterministic Linear Kill 
-       solver immediately resolves the wounded ship to completion.
-    3. Smooth, continuous linear reward signal (Zero cliff-edges):
-       Reward = -shots_taken + SunkBonus + (50 - total_shots when cleared).
-    4. Action Masking strictly enforces legal on-parity hunting tiles.
+    2. Strict Fog of War Compliance:
+       - Only the lethal shot is marked CELL_SUNK; previous hits remain CELL_HIT.
+       - Ship lengths/identities are never exposed to the agent observation tensor.
+    3. Deduction-Driven Assassin (Sherlock Exact Density / Linear Kill):
+       - Resolves all active hits immediately until no wounded ships remain.
+    4. Hypothesis Pruning / Information-Gain Reward:
+       - Misses are rewarded proportional to candidate placement hypotheses eliminated.
+    5. Zero Carrier Penalty:
+       - Kill sequence only penalizes missed shots incurred: -(kill_misses) + 2.0 * sunk_count.
+    6. Paired-Board Regret Minimization:
+       - Terminal reward compares agent shots directly against Sherlock baseline on the exact same board:
+         Regret = baseline_shots - agent_shots.
     """
-    def __init__(self, num_envs=256, device='cuda'):
+    def __init__(self, num_envs=32, device='cpu'):
         self.num_envs = num_envs
         self.device = torch.device(device if torch.cuda.is_available() and device == 'cuda' else 'cpu')
         self.grid_size = 10
         self.total_pegs = 17
 
+        # Precompute placement hypotheses bitmasks for fast information-gain calculation
+        self._init_placement_hypotheses()
+
+        # Shared deterministic deduction engine for linear kill resolution
+        self.sherlock_assassin = SherlockBot()
+
         # CPU representations for fast board truth tracking
         self.truth_boards = np.zeros((num_envs, 10, 10), dtype=np.int32)
         self.ship_id_maps = np.zeros((num_envs, 10, 10), dtype=np.int32)
-        self.tracking_boards = np.zeros((num_envs, 10, 10), dtype=np.int32) # 0: unknown, -1: miss, 1: hit, 2: sunk
-        self.ship_pegs = [{} for _ in range(num_envs)] # dict {ship_id: [(r,c), ...]}
+        self.tracking_boards = np.zeros((num_envs, 10, 10), dtype=np.int32)
+        self.ship_pegs = [{} for _ in range(num_envs)]
         self.ship_health = np.zeros((num_envs, 6), dtype=np.int32)
+        self.misses_masks = [0 for _ in range(num_envs)]
+        self.move_histories = [[] for _ in range(num_envs)]
+        self.baseline_shots = np.zeros(num_envs, dtype=np.int32)
 
         # PyTorch State Tensors [N, 4, 10, 10]
-        # Channels: 0: Misses, 1: Hits (active), 2: Sunk, 3: Parity
+        # Channels: 0: Misses, 1: Hits, 2: Sunk, 3: Parity
         self.states = torch.zeros((num_envs, 4, 10, 10), dtype=torch.float32, device=self.device)
         self.action_masks = torch.ones((num_envs, 100), dtype=torch.float32, device=self.device)
 
@@ -46,6 +91,26 @@ class DecomposedBattleshipEnv:
 
         for i in range(num_envs):
             self._reset_env(i)
+
+    def _init_placement_hypotheses(self):
+        """Precomputes bitmasks for all 760 valid ship placements and cell lookup table."""
+        self.all_placements = []
+        for length in FLEET_SIZES:
+            for r in range(10):
+                for c in range(10 - length + 1):
+                    coords = [(r, c + k) for k in range(length)]
+                    mask = sum(1 << (cr * 10 + cc) for cr, cc in coords)
+                    self.all_placements.append((mask, coords))
+            for r in range(10 - length + 1):
+                for c in range(10):
+                    coords = [(r + k, c) for k in range(length)]
+                    mask = sum(1 << (cr * 10 + cc) for cr, cc in coords)
+                    self.all_placements.append((mask, coords))
+
+        self.cell_placements = [[] for _ in range(100)]
+        for idx, (mask, coords) in enumerate(self.all_placements):
+            for r, c in coords:
+                self.cell_placements[r * 10 + c].append(idx)
 
     def _reset_env(self, env_idx):
         self.game_counter += 1
@@ -88,8 +153,13 @@ class DecomposedBattleshipEnv:
         self.ship_health[env_idx] = health
         self.pegs_remaining[env_idx] = 17
         self.shots_taken[env_idx] = 0
+        self.misses_masks[env_idx] = 0
+        self.move_histories[env_idx] = []
 
-        # Tensor state update
+        # Paired Control Variate: Compute Sherlock baseline shots on this exact board
+        self.baseline_shots[env_idx] = compute_sherlock_baseline(s_map, p_offset)
+
+        # PyTorch state tensor initialization
         self.states[env_idx].zero_()
         grid_r = torch.arange(10, device=self.device).view(-1, 1).expand(10, 10)
         grid_c = torch.arange(10, device=self.device).view(1, -1).expand(10, 10)
@@ -120,84 +190,89 @@ class DecomposedBattleshipEnv:
 
         self.action_masks[env_idx] = torch.from_numpy(mask).to(self.device)
 
-    def _execute_linear_kill(self, env_idx, initial_hit_r, initial_hit_c):
+    def _execute_linear_kill(self, env_idx):
         """
-        Executes deterministic Linear Kill for a wounded ship until sunk.
+        Executes deduction-driven assassination using Sherlock's Exact Target Density / Linear Kill
+        until all active wounded ships are sunk.
         Returns:
-            shots_taken (int): total shots consumed in this assassination sequence.
+            kill_shots (int): total shots fired during this assassination sequence.
+            kill_misses (int): total misses fired during this assassination sequence.
+            sunk_count (int): additional ships sunk during this assassination sequence.
         """
         tb = self.tracking_boards[env_idx]
         truth = self.truth_boards[env_idx]
         s_map = self.ship_id_maps[env_idx]
+        history = self.move_histories[env_idx]
 
-        shots_consumed = 0
-        active_hits = [(initial_hit_r, initial_hit_c)]
+        kill_shots = 0
+        kill_misses = 0
+        sunk_count = 0
 
-        target_ship_id = s_map[initial_hit_r, initial_hit_c]
+        while self.pegs_remaining[env_idx] > 0:
+            solutions = self.sherlock_assassin._analyze_board_state_all(tb, history)
+            has_active = any(sol[0] for sol in solutions) if solutions else False
+            if not has_active:
+                break
 
-        while self.ship_health[env_idx, target_ship_id] > 0:
-            target = None
-
-            if len(active_hits) == 1:
-                # Test orthogonal unknown neighbors
-                r, c = active_hits[0]
-                neighbors = [(r-1, c), (r+1, c), (r, c-1), (r, c+1)]
-                valid = [p for p in neighbors if 0 <= p[0] < 10 and 0 <= p[1] < 10 and tb[p[0], p[1]] == CELL_UNKNOWN]
-                if valid:
-                    target = valid[0]
-            else:
-                # Inline extension
-                rows = [p[0] for p in active_hits]
-                cols = [p[1] for p in active_hits]
-
-                if len(set(rows)) == 1:
-                    # Horizontal line
-                    r = rows[0]
-                    c_min, c_max = min(cols), max(cols)
-                    if c_min - 1 >= 0 and tb[r, c_min - 1] == CELL_UNKNOWN:
-                        target = (r, c_min - 1)
-                    elif c_max + 1 < 10 and tb[r, c_max + 1] == CELL_UNKNOWN:
-                        target = (r, c_max + 1)
-                else:
-                    # Vertical line
-                    c = cols[0]
-                    r_min, r_max = min(rows), max(rows)
-                    if r_min - 1 >= 0 and tb[r_min - 1, c] == CELL_UNKNOWN:
-                        target = (r_min - 1, c)
-                    elif r_max + 1 < 10 and tb[r_max + 1, c] == CELL_UNKNOWN:
-                        target = (r_max + 1, c)
-
-            if target is None:
-                # Edge case: fallback to any unknown neighbor
-                for hr, hc in active_hits:
-                    neighbors = [(hr-1, hc), (hr+1, hc), (hr, hc-1), (hr, hc+1)]
-                    valid = [p for p in neighbors if 0 <= p[0] < 10 and 0 <= p[1] < 10 and tb[p[0], p[1]] == CELL_UNKNOWN]
-                    if valid:
-                        target = valid[0]
+            target, _, _, _ = self.sherlock_assassin.get_best_move(tb, history)
+            if target is None or tb[target[0]][target[1]] != CELL_UNKNOWN:
+                # Failsafe: find any unknown neighbor of active hits
+                target = None
+                for r in range(10):
+                    for c in range(10):
+                        if tb[r, c] == CELL_HIT:
+                            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                                nr, nc = r + dr, c + dc
+                                if 0 <= nr < 10 and 0 <= nc < 10 and tb[nr, nc] == CELL_UNKNOWN:
+                                    target = (nr, nc)
+                                    break
+                        if target:
+                            break
+                    if target:
                         break
                 if target is None:
-                    break # Failsafe
+                    break
 
-            tr, tc = target
-            shots_consumed += 1
+            tr, tc = int(target[0]), int(target[1])
+            kill_shots += 1
+            self.shots_taken[env_idx] += 1
 
-            if truth[tr, tc] == 1:
+            if truth[tr, tc] > 0:
                 # Hit!
-                tb[tr, tc] = CELL_HIT
                 hit_s_id = s_map[tr, tc]
                 self.ship_health[env_idx, hit_s_id] -= 1
                 self.pegs_remaining[env_idx] -= 1
-                active_hits.append((tr, tc))
+                is_sunk = (self.ship_health[env_idx, hit_s_id] == 0)
+
+                if is_sunk:
+                    tb[tr, tc] = CELL_SUNK
+                    sunk_count += 1
+                    res_str = "SUNK"
+                else:
+                    tb[tr, tc] = CELL_HIT
+                    res_str = "HIT"
+
+                history.append({
+                    "shotNumber": int(self.shots_taken[env_idx]),
+                    "x": tr,
+                    "y": tc,
+                    "result": res_str,
+                    "isSunk": is_sunk
+                })
             else:
                 # Miss
                 tb[tr, tc] = CELL_MISS
+                kill_misses += 1
+                self.misses_masks[env_idx] |= (1 << int(tr * 10 + tc))
+                history.append({
+                    "shotNumber": int(self.shots_taken[env_idx]),
+                    "x": tr,
+                    "y": tc,
+                    "result": "MISS",
+                    "isSunk": False
+                })
 
-        # Once ship is sunk, convert all its pegs to CELL_SUNK
-        if self.ship_health[env_idx, target_ship_id] == 0:
-            for pr, pc in self.ship_pegs[env_idx][target_ship_id]:
-                tb[pr, pc] = CELL_SUNK
-
-        return shots_consumed
+        return kill_shots, kill_misses, sunk_count
 
     def step(self, hunt_actions):
         """
@@ -215,51 +290,83 @@ class DecomposedBattleshipEnv:
         completed_games = []
 
         for i in range(self.num_envs):
-            act = actions[i]
+            act = int(actions[i])
             r = act // 10
             c = act % 10
 
             tb = self.tracking_boards[i]
             truth = self.truth_boards[i]
 
-            # 1. Evaluate Hunt Shot
             if truth[r, c] == 0:
-                # Hunt Miss
+                # 1. Hunt Miss
+                prev_mask = self.misses_masks[i]
                 tb[r, c] = CELL_MISS
+                self.misses_masks[i] |= (1 << int(act))
                 self.shots_taken[i] += 1
-                
-                # Dense Information-Gain Shaping: openness bonus
-                open_neighbors = sum(1 for dr, dc in [(-1,0), (1,0), (0,-1), (0,1), (-2,0), (2,0), (0,-2), (0,2)]
+                self.move_histories[i].append({
+                    "shotNumber": int(self.shots_taken[i]),
+                    "x": r, "y": c,
+                    "result": "MISS", "isSunk": False
+                })
+
+                # Information-Gain: count how many surviving candidate placements were eliminated
+                eliminated = 0
+                for p_idx in self.cell_placements[act]:
+                    p_mask, _ = self.all_placements[p_idx]
+                    if (p_mask & prev_mask) == 0:
+                        eliminated += 1
+
+                info_gain = min(eliminated / 45.0, 1.0)
+                open_neighbors = sum(1 for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-2, 0), (2, 0), (0, -2), (0, 2)]
                                      if 0 <= r+dr < 10 and 0 <= c+dc < 10 and tb[r+dr, c+dc] == CELL_UNKNOWN)
-                open_bonus = (open_neighbors / 8.0) * 0.1
-                rewards[i] = -1.0 + open_bonus
+                open_bonus = (open_neighbors / 8.0) * 0.05
+                rewards[i] = -1.0 + 0.15 * info_gain + open_bonus
             else:
-                # Hunt Hit! Trigger Linear Kill assassin
-                tb[r, c] = CELL_HIT
+                # 2. Hunt Hit!
                 s_id = self.ship_id_maps[i, r, c]
                 self.ship_health[i, s_id] -= 1
                 self.pegs_remaining[i] -= 1
                 self.shots_taken[i] += 1
+                is_sunk = (self.ship_health[i, s_id] == 0)
 
-                kill_shots = self._execute_linear_kill(i, r, c)
-                self.shots_taken[i] += kill_shots
+                if is_sunk:
+                    tb[r, c] = CELL_SUNK
+                    initial_sunk = 1
+                    res_str = "SUNK"
+                else:
+                    tb[r, c] = CELL_HIT
+                    initial_sunk = 0
+                    res_str = "HIT"
 
-                total_shots_for_kill = 1 + kill_shots
-                # Reward: cost of shots + Sunk bonus
-                rewards[i] = -float(total_shots_for_kill) + 2.0
+                self.move_histories[i].append({
+                    "shotNumber": int(self.shots_taken[i]),
+                    "x": r, "y": c,
+                    "result": res_str, "isSunk": is_sunk
+                })
 
-            # 2. Check Game Completion
+                # Execute assassin until all active hits are resolved
+                kill_shots, kill_misses, sunk_count = self._execute_linear_kill(i)
+                total_sunk = initial_sunk + sunk_count
+
+                # Carrier Penalty Removed: Only penalize misses incurred; reward finding and sinking ships
+                rewards[i] = -float(kill_misses) + 2.0 * float(total_sunk)
+
+            # 3. Check Game Completion
             if self.pegs_remaining[i] == 0:
                 dones[i] = True
                 final_shots = int(self.shots_taken[i])
-                
-                # Smooth continuous terminal reward (Zero cliff edges!)
-                # Every shot saved below 50 is linearly rewarded by +1.0
-                rewards[i] += float(50 - final_shots)
+                baseline = int(self.baseline_shots[i])
+
+                # Paired-board regret: positive if agent beat Sherlock baseline
+                regret = float(baseline - final_shots)
+                tail_penalty = -2.0 * float(max(0, final_shots - 60))
+                rewards[i] += regret + tail_penalty
 
                 completed_games.append({
                     'env_idx': i,
-                    'total_shots': final_shots
+                    'total_shots': final_shots,
+                    'baseline_shots': baseline,
+                    'regret': regret
                 })
                 self._reset_env(i)
             else:

@@ -88,10 +88,14 @@ class NeuralBot:
 
         with torch.no_grad():
             x = self._build_input_tensor(board, [])
-            occ_logits, policy_logits = self.model(x)
-
-            # Probabilities via Sigmoid for occupancy
-            probs = torch.sigmoid(occ_logits)[0].cpu().numpy().reshape(10, 10)
+            if hasattr(self.model, 'occupancy_head') and hasattr(self.model, 'res_layers') and hasattr(self.model, 'stem'):
+                features = self.model.res_layers(self.model.stem(x))
+                occ_logits = self.model.occupancy_head(features).squeeze(1).view(x.size(0), 100)
+                probs = torch.sigmoid(occ_logits)[0].cpu().numpy().reshape(10, 10)
+            else:
+                out = self.model(x)
+                logits = out[0] if isinstance(out, tuple) else out
+                probs = torch.softmax(logits, dim=-1)[0].cpu().numpy().reshape(10, 10)
 
         heatmap = [[0]*10 for _ in range(10)]
         for r in range(10):
@@ -105,16 +109,17 @@ class NeuralBot:
         return heatmap
 
     def get_best_move(self, board, move_history):
-        # 1. ASSASSIN / LINEAR KILL PHASE
-        # If open hits exist, use deterministic deduction to follow line of hits
-        has_open_hits = any(board[r][c] == CELL_HIT for r in range(10) for c in range(10))
-        if self.use_linear_kill and has_open_hits:
+        # 1. ASSASSIN / TARGET RESOLUTION PHASE
+        # Use CSP analysis to determine if there are genuinely active (un-sunk) hits
+        solutions = self.sherlock_assassin._analyze_board_state_all(board, move_history)
+        has_active = any(sol[0] for sol in solutions) if solutions else False
+        if self.use_linear_kill and has_active:
             target, strat, ui_sizes, diagnostics = self.sherlock_assassin.get_best_move(board, move_history)
             if target and board[target[0]][target[1]] == CELL_UNKNOWN:
                 heat = self.get_heatmap(board)
                 heat[target[0]][target[1]] = 100
                 self.last_heatmap = heat
-                return target, "NeuralBot: Linear Kill Override (Active Hit)", ui_sizes, diagnostics
+                return target, f"NeuralBot: Assassin ({strat})", ui_sizes, diagnostics
 
         # 2. NEURAL HUNTING PHASE
         if self.model is None:
@@ -123,7 +128,16 @@ class NeuralBot:
 
         with torch.no_grad():
             x = self._build_input_tensor(board, move_history)
-            occ_logits, policy_logits = self.model(x)
+            out = self.model(x)
+            if isinstance(out, tuple):
+                if out[0].shape == out[1].shape:
+                    policy_logits = out[1]
+                elif out[0].shape[-1] == 100:
+                    policy_logits = out[0]
+                else:
+                    policy_logits = out[0]
+            else:
+                policy_logits = out
 
             # Softmax policy distribution
             policy_probs = torch.softmax(policy_logits, dim=-1)[0].cpu().numpy()

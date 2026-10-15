@@ -14,15 +14,15 @@ def simulate_single_game(game_id, bot_choice):
     # Dynamically instantiate the correct bot based on the string argument
     if bot_choice.lower() in ['neural', 'moriarty']:
         from bots.neural_bot import NeuralBot
-        bot = NeuralBot()
+        bot = NeuralBot(parity_offset=game_id % 2)
     elif bot_choice.lower() == 'neural_luki':
         from bots.neural_bot import NeuralBot
         weights = os.path.join(os.path.dirname(__file__), 'data', 'moriarty_luki_best.pth')
-        bot = NeuralBot(weights_path=weights)
+        bot = NeuralBot(weights_path=weights, parity_offset=game_id % 2)
     elif bot_choice.lower() in ['neural_rl', 'rl']:
         from bots.neural_bot import NeuralBot
         weights = os.path.join(os.path.dirname(__file__), 'data', 'moriarty_rl_best.pth')
-        bot = NeuralBot(weights_path=weights)
+        bot = NeuralBot(weights_path=weights, parity_offset=game_id % 2)
     elif bot_choice.lower() == 'mycroft':
         from bots.mycroft import MycroftBot
         bot = MycroftBot()
