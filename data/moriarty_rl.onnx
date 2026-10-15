@@ -620,40 +620,42 @@ getitem_30leaky_relu_11node_leaky_relu_11"	LeakyRelu*
 main_graph*^@Bstem.0.weightj!
 locationmoriarty_rl.onnx.dataj
 offset6544j
-length9216p*”@Bstem.0.biasJ€¼Iè=<M?QD3?0>½Âµ‰½†ŠŒ?èÕœ¾sp?Hm?à?Ò]?wm>bµÊ>`Ú?~Y6>Æ½f?˜Ê?ú6±½Ê#?w+?ZÙò>¸€¿ğ-Ì?È_ş>qc ¿Ÿ…¿¦‘“?ˆP~¾³'>m*a¾×\	?è¾h¾`¿ìXµ>ÒÒj?eã+?)@:‰¶>¢:¿û…?> xÔ9£^¤>#±¾÷T(¿zªB>H?N·‚?Oò¾$Š ?°v?N~_>~p>¤‹ö¾öİ{½"‹¼ùP=³U ¾ÏC5¾Ç+E>`j>`ÇºÓÌ¾!©š?(>*n@@Bres_layers.0.conv1.weightj!
+length9216p*”@Bstem.0.biasJ€H›~=uUv?×Ÿ'? 6¦¼L©2½B…¥??µ}¾1]c?ZOr?»I?EÕT?æ8S> Jè>åq?ˆü>½[?ÌÈ;?mÏæ½\"G?Y?•?«„¿ªÓÎ?¸Ï%? ê
+¿›ë¿‹ª?m4‰¾±†>1M‰¾`í?gW¾|¿Ö¢>šÊw?œÄI?©8@Øœ>âú¿ÀJA>àse=‹^Ñ>ìø®¾>G/¿ué%>o•?s5•?6•Ï¾r¤1?N-?6F,>”šq> ş¾’¸‘½%qÁ¼ä8R>1¢¾¸ºì½Ş —>.-˜>c¿<¼§ç¾jf“?Ô.¦>*n@@Bres_layers.0.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset191888j
-length147456p* @Bres_layers.0.conv1.biasJ€÷k>×S>2z5¾vm¾BØ?ò?t­?‰N?àFˆ=ÎW>†ky¾ ¸5=Ñ¯Ç¾ïš\?`çn>¾€¿à¾Ø3v>)ÀW¾¸¿Sƒ?ñA9?óÑ<øàô< Úƒ=µ>	Ö¾†Ğ=ß÷¼"À> ÷¾¶)½ÎIØ>:‹¾Ìz>u¿4&?¢6Æ½fy?CW¿½B¿¶n>`aî½¿««¾üÛ”?RAô¾şê¢?ølO?å¾î]¹>ôäß>¼%³>ŞÜ?¼×¾Ô+¿ÅÎ¿8W½ÚŒ>|Á1>mé¾Ê
->²›¾ É6¾ZZ¿*n@@Bres_layers.0.conv2.weightj!
+length147456p* @Bres_layers.0.conv1.biasJ€´)->Ğ5>Û ş½Ù,{¾ù?Ë
+6?¦?ê·;? ş¦:´E>ê˜„¾Ğ+¼U6Ò¾Šr?ìV>¹zú¾ßÌ¾èF>n#:¾*¸¿Æq?5ÚU? y*=h×G=àS>=Ò—¥>Mş¾P_ >héÄ<~;Ä>pE=Ç‚½Z}å>ê¤©¾4b>†d¿ô!?d¾XR?{ñz¿øİ¿ÖZˆ>±Ï*¾*¸‘¾Ù£?Ëˆ¿Œ¡?Œmf?ò=¾p	ì>Ççà>%?6Ã?Ä=¾HÁ6¿ºl¿2€ª½`¹¶>˜>íÒñ¾>«5˜¾¤Öj¾ ¿*n@@Bres_layers.0.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset339344j
-length147456p* @Bres_layers.0.conv2.biasJ€¾`Yé=Bi>„u¾Òê]¾0v%½t¿nz>X.¿Ô³=ôE¡¾<•&?ıø¬>q¶3>Ä½V–¿”ô¿ª|>,V,?hhY<}Ù‹>³it>ˆÀ>¦ßú> ÷`=8½l¿È“>ÓÇÒ>Pí“>ª÷W½ŠVÁ½€õª<ÔŸî½@KC=°B¾rn¿À7°¿’’Å¾ÙÜg>J}¿×l?Ş2¡>Êé•½àDM¼„¸=‰Åµ¾LÒ?š®½˜f!>,õ>gªÌ¾•ŸÀ¾ø¦?¾¾W ¾®p!¿uÕ¶¿°³¿ß‰>)†½H:¿Ø)¡>„ëB¿<^L¿êf•>*n@@Bres_layers.1.conv1.weightj!
+length147456p* @Bres_layers.0.conv2.biasJ€Sî–¾ƒÏ=´¸ˆ>Š¾,J¾Šo
+¾H8y¿d4—>:¾
+¿ =„,š¾/(?2µu>	¬K>dKë½7í	¿¾ı7¿xî…>ô'3?Z#…=¬«t>‘J%>¤Í>IIæ><q¯=vº€¿E?Ä>ÍŞ>·Yƒ>°ñ<ªI"¾ Â$;¿±¾`; ½€J¾H™y¿œ³È¿.	Ü¾K2>ÊN4¿xcQ?°=ª>"“Ÿ¼XÀï<Ÿ¡=Ñô¾¡$?µùì½Ê–>C;ô>Z_Ø¾üË«¾Ù˜+¾€Ì½cã%¿úëä¿Hï¿–c”>¿šŸ½I“'¿Úœ>tFE¿êãV¿f´»>*n@@Bres_layers.1.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset486800j
-length147456p* @Bres_layers.1.conv1.biasJ€–Z¾¿@Ù’<S€¼ŞÌ?4ñ—½œ©ƒ¾VÇJ>@’ê¾üs,?¸Šİ¾‚ÇÀ„‚¾ü4“½½²¾¾\”¼ÌÓÚ¾8+:?P½ß­Ú¾ÜŞH¾Õ¨¿'ß“>°—à<±Ot¾ÖæÅ>š˜(¿”<G¿86½]ÉI¾gp.¿°M¯¾*|¿lÏÓ½¼›=11¿g±Ç>h->´Ç=°Ü¼äj¿£7?F‘>áü>úœ*¾R?—=0õQ¿š¹¿È—~¿¤ô©¾ óà½Ö:?HÖì>ÏHÅ=kh¿¸½d¾É>*Av¿FÌ¾?
-¿æ“¾w¾ù¢ó¾„°«¿*n@@Bres_layers.1.conv2.weightj!
+length147456p* @Bres_layers.1.conv1.biasJ€7ï¾İR)¿ º¼ e…½|†.?Ì¸V¾øk¾Èˆı=ˆ”¿Œz?ĞğÜ¾÷ç¿•÷¾ ı¼æuÖ¾Ï&!=ï´¿³q?4è½KEÌ¾p²Q¾½«Á¿ª|M>@1½ZÇg¾ÓÇç>øÜJ¿z¿K¿êo¾Ç¹€¾Nô"¿·¬§¾¤L¿
+p<¾xg=W¿:/ó>ğÃØ<”l"=ˆÀü<ZÜz¿âT#?nªŠ>o…ş>`½ŒN'>¦"¿-Â¿C˜Œ¿èãš¾`Â¼Ê#Z?Æ¤ğ>”#>pÜ€¿â¶^¾5&Ô>ÅlR¿	©¾"¿¯¾xl\¾zdë¾Ä©³¿*n@@Bres_layers.1.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset634256j
-length147456p* @Bres_layers.1.conv2.biasJ€>zÂ¿65¤½ÑçP?‡1<?¹ÈÑ¾æ¿b¿]X¿Øí3>vÍî¾U=¾¼k•>œŠ‹½<º=Œ6ü¾0d¾ÙSÁ¿ˆ¡¾äú™¿Ø}.?Çò&¾”} ¾L‹¾&[„¿yÒ¾Lãî>Èa¾úe1>ô¡R¿€iÿ¼ å½|ú-?0Ö(>ñ¿˜_d½î®¾;Òƒ¿b¿ûrd¿[•¿À7Z½lê(¿¶²á½âg¾i6[¿v¾ÂÀ½=¥O¾Ú½ğÁ<˜5½÷+¾øÍ•¾™€¾ ½À½Èw€¾:Ã¿¬á>Šóe¿XPÛ¾­l½V=¿†\¿8b¿*n@@Bres_layers.2.conv1.weightj!
+length147456p* @Bres_layers.1.conv2.biasJ€ûM´¿ 4µ½²3?Œ6?êSè¾RĞT¿Th¿ˆìc>¤g	¿,¤C¾5„>x­R=ÈÎ£¼ƒ¿äÁâ½„Ã£¿•Ã®¾ÈÑ¿ÒgC?•M¾…"G¾Hğ¥¾Ò…¿ì6¶¾ü1î>±Ê¾üpu>Ät¿Äi‡½¶á ¾&™.?8Š>z9¿ğõ½h¥{¾2>—¿™e¿vvm¿·™¿°º¬=ûî4¿Œ›¾nl ¾vj¿ñ˜¾ ë<$×\¾˜Àº½p^	<¸–F=4¾¾b:”¾ØZz¾¸Hù½ 4;÷d¾õl¿~?1>C‹¿xqã¾4ÅM¾b¡0¿²šd¿)È¾*n@@Bres_layers.2.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset781712j
-length147456p* @Bres_layers.2.conv1.biasJ€š£š>>I`¿;^õ¿Ä¸£>I¾TÈ¿ ¡¼=jd>R?ƒ¾_¾’ï¿dÓ¾"¤ª>Û¿Êy?¸Ğö½Èµ·¾¨Ğ°¾€Pâ>ôÂ¼>¸ê6¾ª#?v"y¿¡S¨¿˜M=§Æ¿z{ç¾â ¿.æ¢¿*‚‚¿•A
-¿¤eB¾^«¥>“Ü¾?'u»¿zç&>˜Î¾:Ş?‰uã¿½3¢¾r/ù¾*GÂ¾ôgú¾[½äa@¿„êí¾âÔã=ä'Q?úË0¿A|>Mk?‚’)¿ˆß¿Ik¿Ÿ}0¿È‹½Ò¾©ÖÍ¾ıI©¾f j¿àÊõ=~÷>ÅKn¿*n@@Bres_layers.2.conv2.weightj!
+length147456p* @Bres_layers.2.conv1.biasJ€Ğİ¤>E^ ¿ßü¿„S8>ô†Œ½²¾¿läï=fmŒ>9±?#á|¾ßˆ¿7uı¾bp?ø/ ¿aç?èNG¾W´¾İºç¾9œş>Aö­>J(<¾íİÇ>Ÿ“‚¿™÷¤¿à£`=Úû¾¼ °¾ØŠ¿Š£¿ôY“¿Ôì¾P)b¾´Ö¤>ò@¾…Õ?È@¶¿@[m>€O”=z?êmŞ¿–ò}¾Y—Ù¾6/­¾qä¾ˆQ½PlG¿¢¯˜¾àÉÓ=1?0?”ó4¿ò{ >àb?ßC!¿îOÆ¿Mf¿AY<¿´Ò½àú;¾iÆˆ¾¸n´¾¿TJ¿$x">¬¯ú>™t¿*n@@Bres_layers.2.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset929168j
-length147456p* @Bres_layers.2.conv2.biasJ€ƒi‘¿ï’>•‡§> Tã<h¨&¿P›¿L‘{>@ïL¿›[‘¾ W·½Æì;¿’‘¾œ-•>ö#\>h{j¿\²‹>ÿóx?Ÿ½œw>”ˆ#=ş?à5>(_?Â½û”p=	–½àaó=ı¾t†>Œdt¾@¯ ¾AiZ¿çê¾lGÏ>VyÂ>Œ‚Ş¾ŸuS¾ˆ½=ÎŠè>f÷¿Ví=¿ Ù|½4øü=àØx>›—>>,5¯½\°?›.Ü¾(æö=Œ( ¾–çÎ>
-¿ì½¹?bÀ¾LŞ¾8šu¾ %ğ¾`,<º>`ß•½@àÀ¼ÌDÊ½–¼ú¿*o@@Bres_layers.3.conv1.weightj!
+length147456p* @Bres_layers.2.conv2.biasJ€Yk¿8=@>úTC>*…=”>0¿ùè+¿(B©>ı0¿óÏ±¾¸á½0¢4¿Š±Ê¾Î¡>p+#>¤‹z¿FY´>ó¶|?ç«¼°<Œ>¥ú‹=d?Zv#>WUè>{u¢½<›<¾< >@ç•½Ñé2>”ø½Zñ‚¾¢|I¿c	¿Âšt>¬ùÖ>¿,S¥½Ì–™>Bœ?¹ø¤¿(ŸJ¿ğò½ÌV*>pf>"ƒ¿> ùL;Í†ğ>ÅÚ¾$•Ç=ƒF½Ïº›>Üû¿Œéª½º?{º¾HfÂ¾œnC¾jÈë¾Û¾tŠ>4_¾¼W ¾Œ¦¾ê•Ô¿*o@@Bres_layers.3.conv1.weightj!
 locationmoriarty_rl.onnx.dataj
 offset1076624j
-length147456p* @Bres_layers.3.conv1.biasJ€F¹¦¾(í6½f¾¾7¿À¿K£á¾(—%?˜Ã%ÀµdT¿j¿Àf¿*7D¿Ğôr¾ØY¢¿n:Ó½¶©~>'”.¿MÏ™¾ œ#¿Ü;‡¿¬¥q¾–S*?Ü/F?X@ó¾ŞE ?´ùd¾ôò>Ø`D>X$ñ>¬‘§=ğ4Ä<N >È5¿ï•›¿ô^K¿"½/¿8·O¿€„É<D\,¿ˆbL¿Ìú¶¾ÄB½Ú8¿ĞV¾hÅ&¾ø­Ù½@<"¿Ä(j>0œâ>&ä¿°ÇY½(-C½ÀD¾¼Éò½˜aR¿vç‡¾‚Qñ¾eJ¿lS©¿u#¿ôC¦= ™*>	¿*o@@Bres_layers.3.conv2.weightj!
+length147456p* @Bres_layers.3.conv1.biasJ€*y¾>Ÿ¾Bî¥¾‡|;¿X»"¿”0Ò¾¡Ä?ÀÄ%Àæ4¿¬›‹¿ô‡S¿"/¿È7P¾r¡¿cx¾R+>±¿A•¾®¿/Í^¿¨›U¾n ?²”9?£/¿(}¾>|#¾t«>°“5>\> µ=…µ¼zY=Œ
+¿3Ÿ¿tÛO¿Ÿ#3¿}L¿`CŠ¼ªØ)¿QDK¿ÄÉ¾X§ª¼~£,¿Ô>/¾ ¹ö±p¾ı¹½Jß¾ŞG!>€|”»‘!¿@à†¼¸RÇ½.ˆŞ½nël¾›ô5¿ø“¾±#ç¾rG<¿ö›¿ÈÎ¿8y)½é:>œâÕ¾*o@@Bres_layers.3.conv2.weightj!
 locationmoriarty_rl.onnx.dataj
 offset1224080j
-length147456p* @Bres_layers.3.conv2.biasJ€Dh»¾Ç5?ß5N?]¿´ià>BIŒ>2ÍŞ>Ö{M¿mt.?B<ˆ=~À‰$ÿ¾Ğ2•¿³ı?Å’?×Ì?# ?²ZŠ?ºÙ?ªç¾>ôÔÆ?a^?e>¦>ˆvM?¹Çƒ>§Ë	¾4äš¾%ŠÈ>fB?–Î)¾—æ«?€)û=¨ú‚?òåŠ?€ò‡>-1?L¤?{¿`?{
-¿¶Àj
-?Ö>åK?êz,?3¾Bƒ>bi.?ú+Â¾á†”¾@¤ç¾üe¾»?chä>´bë¾æg%¿înç¿@AW¾û=?rˆË>f˜“>{G?t09¾ûv“?*g @Bpolicy_head.0.weightj!
+length147456p* @Bres_layers.3.conv2.biasJ€0v¾Œ^Ê>Îã?g¿¬¬>ì¶%>kµÿ>4+¿YÏI? /9Ú—ı¿ç²¿©M¿\?¬€p?Al?€ßC>ÍÎ–?†ÀÓ>|ÔÇ>!w´?&?xFë=èªï=¦N?LØ­>N–Î½ºr·¾ 'P>61+?Àc½dÁF?İ“½ÒÓe?+¥?Š‡“>7î:?h¦¶?![[?ò]
+¿À Àë ?D>J?ótb?ğ¢>?‚R½Ôp>ßhC?±%ã¾|P@¾P %¿
+,¾›îô>Í`>ÂÛ¾§ø¿ı·¿pY„½™?àÿl>¼è‡>2@?D÷x¾ ?*g @Bpolicy_head.0.weightj!
 locationmoriarty_rl.onnx.dataj
 offset15760j
-length73728p*› Bpolicy_head.0.biasJ€Ô’W=Ñ§×¼L]Ì<oò >mş‚=:ıå<à|M<f&ƒ=H­d½P³½»z¾ =µa(>(í<4Q=©½úR”=Xím=8U¼ ó;úÚ×=à=â€J=‚²Ÿ=Æ9d½ zl=T­‘=Ôã­¼š@¼Pä‹=x›=<Î¡<”H9=*i€€Bpolicy_head.4.weightj!
+length73728p*› Bpolicy_head.0.biasJ€€:šº(¢?=ĞjD¼z÷ÿ=¢ä >¼W=\èç¼zqÆ=¸ê½\Z=<ŒG=<0‹=¥%`='.‰=6õ¯½Œ2½8†¼€[»7±½˜F+=Dhr½qƒ=ÈõÈ<ØA‚½w¨»=°<0*¼üSP<@O¦:0G<xo»<`¶¹=*i€€Bpolicy_head.4.weightj!
 locationmoriarty_rl.onnx.dataj
 offset2228224j
 length3276800p*^€Bpolicy_head.4.biasj!
@@ -668,7 +670,7 @@ main_graph*^@Bstem.0.weightj!
 length400p*d@Bvalue_head.0.weightj!
 locationmoriarty_rl.onnx.dataj
 offset2448j
-length4096p*YBvalue_head.0.biasJ@üÿ>š-?ºÍ¾Mİ²¾ª3Ì>+ã‡?.-¿@øÊ>#P?à¶¾–ÃŒ¾Éš¾šš>I—½nê<ç×>*g€ÀBvalue_head.4.weightj!
+length4096p*YBvalue_head.0.biasJ@¸ªÎ>_m>w{¿E?m¢½Xéò¾ìvá<<[5¾'?+£¿GO¿òÿ;¾cµ=P)‚>) =¾ãhY?*g€ÀBvalue_head.4.weightj!
 locationmoriarty_rl.onnx.dataj
 offset1371536j
 length819200p*[€Bvalue_head.4.biasj!
@@ -677,7 +679,7 @@ main_graph*^@Bstem.0.weightj!
 length512p*_€Bvalue_head.6.weightj!
 locationmoriarty_rl.onnx.dataj
 offset912j
-length512p*Bvalue_head.6.biasJÛ ;*Bval_65J       €      *Bval_75J       @      *Bval_76JÿÿÿÿÿÿÿÿZË
+length512p*Bvalue_head.6.biasJó)ğ<*Bval_65J       €      *Bval_75J       @      *Bval_76JÿÿÿÿÿÿÿÿZË
 board_input
 
 
