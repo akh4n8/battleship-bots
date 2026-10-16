@@ -29,33 +29,134 @@ Visualizer.GRID_SIZE = 10
 Visualizer.LEFT_GRID_X = Visualizer.MARGIN
 Visualizer.RIGHT_GRID_X = (Visualizer.MARGIN * 2) + (Visualizer.CELL_SIZE * Visualizer.GRID_SIZE)
 
-Visualizer.COLORS = {
-    BG           = { 25 / 255,  25 / 255,  30 / 255, 1.0 },
-    GRID_LINE    = { 100 / 255, 100 / 255, 100 / 255, 1.0 },
-    WATER        = { 10 / 255,  60 / 255, 120 / 255, 1.0 },
-    SHIP         = { 60 / 255,  70 / 255,  60 / 255, 1.0 },
-    GHOST_VALID  = { 0.0,       1.0,       0.0,       0.47 },
-    GHOST_INVAL  = { 1.0,       0.0,       0.0,       0.47 },
-    LABEL        = { 180 / 255, 180 / 255, 180 / 255, 1.0 },
-    HEADER       = { 225 / 255, 225 / 255, 235 / 255, 1.0 },
-    TELEMETRY    = { 255 / 255, 200 / 255, 100 / 255, 1.0 },
-    VICTORY      = { 60 / 255,  255 / 255, 120 / 255, 1.0 },
-    PEG_MISS     = { 220 / 255, 220 / 255, 220 / 255, 1.0 },
-    PEG_HIT      = { 255 / 255,  50 / 255,  50 / 255, 1.0 },
-    PEG_SUNK     = { 50 / 255,  150 / 255, 255 / 255, 1.0 },
-    DIAG_CLAIMED = { 150 / 255, 150 / 255, 150 / 255, 0.85 },
-    DIAG_ACTIVE  = { 0.0,       229 / 255, 1.0,       1.0 },
-    TARGET_RET   = { 1.0,       240 / 255, 60 / 255,  1.0 }
+Visualizer.THEME_ORDER = {
+    "classic", "baker_street", "sonar_crt", "abyssal"
 }
 
-Visualizer.HEAT_COLORS = {
-    { 10 / 255,  60 / 255, 120 / 255, 1.0 },
-    { 50 / 255, 120 / 255, 160 / 255, 1.0 },
-    { 80 / 255, 160 / 255, 120 / 255, 1.0 },
-    { 180 / 255, 180 / 255, 60 / 255, 1.0 },
-    { 220 / 255, 120 / 255, 40 / 255, 1.0 },
-    { 255 / 255,  50 / 255, 50 / 255, 1.0 }
+Visualizer.THEMES = {
+    classic = {
+        label = "Classic Tactical",
+        colors = {
+            BG           = { 25 / 255,  25 / 255,  30 / 255, 1.0 },
+            GRID_LINE    = { 100 / 255, 100 / 255, 100 / 255, 1.0 },
+            WATER        = { 10 / 255,  60 / 255, 120 / 255, 1.0 },
+            SHIP         = { 60 / 255,  70 / 255,  60 / 255, 1.0 },
+            GHOST_VALID  = { 0.0,       1.0,       0.0,       0.47 },
+            GHOST_INVAL  = { 1.0,       0.0,       0.0,       0.47 },
+            LABEL        = { 180 / 255, 180 / 255, 180 / 255, 1.0 },
+            HEADER       = { 225 / 255, 225 / 255, 235 / 255, 1.0 },
+            TELEMETRY    = { 255 / 255, 200 / 255, 100 / 255, 1.0 },
+            VICTORY      = { 60 / 255,  255 / 255, 120 / 255, 1.0 },
+            PEG_MISS     = { 220 / 255, 220 / 255, 220 / 255, 1.0 },
+            PEG_HIT      = { 255 / 255,  50 / 255,  50 / 255, 1.0 },
+            PEG_SUNK     = { 50 / 255,  150 / 255, 255 / 255, 1.0 },
+            DIAG_CLAIMED = { 180 / 255, 190 / 255, 205 / 255, 0.90 },
+            DIAG_ACTIVE  = { 0.0,       229 / 255, 1.0,       1.0 },
+            TARGET_RET   = { 1.0,       240 / 255, 60 / 255,  1.0 }
+        },
+        heat_colors = {
+            { 10 / 255,  60 / 255, 120 / 255, 1.0 },
+            { 50 / 255, 120 / 255, 160 / 255, 1.0 },
+            { 80 / 255, 160 / 255, 120 / 255, 1.0 },
+            { 180 / 255, 180 / 255, 60 / 255, 1.0 },
+            { 220 / 255, 120 / 255, 40 / 255, 1.0 },
+            { 255 / 255,  50 / 255, 50 / 255, 1.0 }
+        }
+    },
+
+    baker_street = {
+        label = "221B Gaslight Ledger",
+        colors = {
+            BG           = { 18 / 255,  14 / 255,  12 / 255, 1.0 },
+            GRID_LINE    = { 115 / 255, 92 / 255,  62 / 255, 1.0 },
+            WATER        = { 24 / 255,  38 / 255,  44 / 255, 1.0 },
+            SHIP         = { 78 / 255,  58 / 255,  40 / 255, 1.0 },
+            GHOST_VALID  = { 110 / 255, 210 / 255, 110 / 255, 0.47 },
+            GHOST_INVAL  = { 220 / 255, 60 / 255,  50 / 255,  0.47 },
+            LABEL        = { 205 / 255, 185 / 255, 148 / 255, 1.0 },
+            HEADER       = { 242 / 255, 224 / 255, 186 / 255, 1.0 },
+            TELEMETRY    = { 245 / 255, 188 / 255, 82 / 255,  1.0 },
+            VICTORY      = { 150 / 255, 235 / 255, 130 / 255, 1.0 },
+            PEG_MISS     = { 232 / 255, 218 / 255, 190 / 255, 1.0 },
+            PEG_HIT      = { 225 / 255, 58 / 255,  45 / 255,  1.0 },
+            PEG_SUNK     = { 245 / 255, 190 / 255, 70 / 255,  1.0 },
+            DIAG_CLAIMED = { 235 / 255, 195 / 255, 115 / 255, 0.92 },
+            DIAG_ACTIVE  = { 105 / 255, 225 / 255, 210 / 255, 1.0 },
+            TARGET_RET   = { 255 / 255, 230 / 255, 120 / 255, 1.0 }
+        },
+        heat_colors = {
+            { 24 / 255,  38 / 255,  44 / 255, 1.0 },
+            { 42 / 255,  78 / 255,  76 / 255, 1.0 },
+            { 110 / 255, 122 / 255, 64 / 255, 1.0 },
+            { 188 / 255, 142 / 255, 52 / 255, 1.0 },
+            { 218 / 255, 92 / 255,  42 / 255, 1.0 },
+            { 205 / 255, 38 / 255,  38 / 255, 1.0 }
+        }
+    },
+
+    sonar_crt = {
+        label = "Cold War Phosphor Sonar",
+        colors = {
+            BG           = { 6 / 255,   14 / 255,  10 / 255, 1.0 },
+            GRID_LINE    = { 28 / 255,  105 / 255, 62 / 255, 1.0 },
+            WATER        = { 8 / 255,   28 / 255,  18 / 255, 1.0 },
+            SHIP         = { 24 / 255,  72 / 255,  46 / 255, 1.0 },
+            GHOST_VALID  = { 40 / 255,  255 / 255, 120 / 255, 0.45 },
+            GHOST_INVAL  = { 255 / 255, 60 / 255,  60 / 255,  0.45 },
+            LABEL        = { 110 / 255, 215 / 255, 145 / 255, 1.0 },
+            HEADER       = { 150 / 255, 250 / 255, 180 / 255, 1.0 },
+            TELEMETRY    = { 190 / 255, 255 / 255, 110 / 255, 1.0 },
+            VICTORY      = { 80 / 255,  255 / 255, 150 / 255, 1.0 },
+            PEG_MISS     = { 130 / 255, 210 / 255, 160 / 255, 1.0 },
+            PEG_HIT      = { 255 / 255, 150 / 255, 30 / 255,  1.0 },
+            PEG_SUNK     = { 40 / 255,  245 / 255, 220 / 255, 1.0 },
+            DIAG_CLAIMED = { 120 / 255, 255 / 255, 160 / 255, 0.92 },
+            DIAG_ACTIVE  = { 255 / 255, 230 / 255, 60 / 255,  1.0 },
+            TARGET_RET   = { 255 / 255, 255 / 255, 140 / 255, 1.0 }
+        },
+        heat_colors = {
+            { 8 / 255,   28 / 255,  18 / 255, 1.0 },
+            { 16 / 255,  72 / 255,  42 / 255, 1.0 },
+            { 36 / 255, 130 / 255,  64 / 255, 1.0 },
+            { 95 / 255, 190 / 255,  55 / 255, 1.0 },
+            { 205 / 255, 210 / 255, 45 / 255, 1.0 },
+            { 255 / 255, 145 / 255, 35 / 255, 1.0 }
+        }
+    },
+
+    abyssal = {
+        label = "Abyssal Bioluminescence",
+        colors = {
+            BG           = { 10 / 255,  11 / 255,  24 / 255, 1.0 },
+            GRID_LINE    = { 68 / 255,  78 / 255, 138 / 255, 1.0 },
+            WATER        = { 16 / 255,  22 / 255,  48 / 255, 1.0 },
+            SHIP         = { 52 / 255,  44 / 255,  92 / 255, 1.0 },
+            GHOST_VALID  = { 0.0,       245 / 255, 190 / 255, 0.45 },
+            GHOST_INVAL  = { 255 / 255, 40 / 255,  110 / 255, 0.45 },
+            LABEL        = { 170 / 255, 182 / 255, 230 / 255, 1.0 },
+            HEADER       = { 225 / 255, 232 / 255, 255 / 255, 1.0 },
+            TELEMETRY    = { 110 / 255, 240 / 255, 255 / 255, 1.0 },
+            VICTORY      = { 80 / 255,  255 / 255, 200 / 255, 1.0 },
+            PEG_MISS     = { 195 / 255, 205 / 255, 240 / 255, 1.0 },
+            PEG_HIT      = { 255 / 255, 55 / 255,  145 / 255, 1.0 },
+            PEG_SUNK     = { 0.0,       235 / 255, 255 / 255, 1.0 },
+            DIAG_CLAIMED = { 190 / 255, 165 / 255, 255 / 255, 0.92 },
+            DIAG_ACTIVE  = { 255 / 255, 225 / 255, 75 / 255,  1.0 },
+            TARGET_RET   = { 80 / 255,  255 / 255, 220 / 255, 1.0 }
+        },
+        heat_colors = {
+            { 16 / 255,  22 / 255,  48 / 255, 1.0 },
+            { 52 / 255,  32 / 255, 108 / 255, 1.0 },
+            { 118 / 255, 36 / 255, 138 / 255, 1.0 },
+            { 188 / 255, 52 / 255, 122 / 255, 1.0 },
+            { 238 / 255, 108 / 255, 68 / 255, 1.0 },
+            { 252 / 255, 198 / 255, 58 / 255, 1.0 }
+        }
+    }
 }
+
+Visualizer.COLORS = Visualizer.THEMES.classic.colors
+Visualizer.HEAT_COLORS = Visualizer.THEMES.classic.heat_colors
 
 Visualizer.BOT_ORDER = {
     "mycroft", "sherlock", "watson", "lestrade", "adler", "moriarty", "mcmc"
@@ -149,11 +250,26 @@ end
 -- ==========================================
 -- 3. VISUALIZER STATE MANAGEMENT
 -- ==========================================
+function Visualizer.switch_theme(theme_key)
+    local key = string.lower(theme_key or "classic")
+    if not Visualizer.THEMES[key] then
+        key = "classic"
+    end
+    local theme = Visualizer.THEMES[key]
+    Visualizer.COLORS = theme.colors
+    Visualizer.HEAT_COLORS = theme.heat_colors
+    if Visualizer.state then
+        Visualizer.state.theme_key = key
+    end
+    return key
+end
+
 function Visualizer.init_state(opts)
     opts = opts or {}
     local state = {
         mode = string.upper(opts.mode or "LIVE"), -- "LIVE" or "REPLAY"
         bot_key = string.lower(opts.bot or "mycroft"),
+        theme_key = string.lower(opts.theme or "classic"),
         csv_path = opts.csv or "data/sherlock_outliers_1792119254.csv",
         deduction = Deduction.new(),
         autoplay = false,
@@ -162,6 +278,7 @@ function Visualizer.init_state(opts)
         last_infer_ms = 0.0
     }
     Visualizer.state = state
+    Visualizer.switch_theme(state.theme_key)
     Visualizer.reset_live_game()
     Visualizer.load_replay_data(state.csv_path)
     return state
@@ -359,6 +476,14 @@ function Visualizer.keypressed(key)
         local next_idx = (cur_idx % #Visualizer.BOT_ORDER) + 1
         Visualizer.switch_bot(Visualizer.BOT_ORDER[next_idx])
         return
+    elseif key == "c" then
+        local cur_idx = 1
+        for i, k in ipairs(Visualizer.THEME_ORDER) do
+            if k == st.theme_key then cur_idx = i; break end
+        end
+        local next_idx = (cur_idx % #Visualizer.THEME_ORDER) + 1
+        Visualizer.switch_theme(Visualizer.THEME_ORDER[next_idx])
+        return
     elseif key == "m" then
         st.mode = (st.mode == "LIVE") and "REPLAY" or "LIVE"
         if st.mode == "REPLAY" then
@@ -465,6 +590,29 @@ local function has_coord(coord_list, r, c)
         if pr == r and pc == c then return true end
     end
     return false
+end
+
+--- Smoothly interpolate across the active theme's heatmap color stops
+local function sample_heat_gradient(cell_heat, max_heat, stops)
+    if max_heat <= 0 or cell_heat <= 0 or not stops or #stops < 2 then
+        return stops and stops[1] or { 0.04, 0.23, 0.47, 1.0 }
+    end
+    local ratio = math.max(0.0, math.min(1.0, cell_heat / max_heat))
+    -- Map ratio in (0..1] across stops[2..#stops] so any non-zero heat is visibly warm
+    local num_active = #stops - 1
+    local scaled = 2.0 + ratio * (num_active - 1)
+    local idx_lo = math.min(#stops - 1, math.max(2, math.floor(scaled)))
+    local idx_hi = math.min(#stops, idx_lo + 1)
+    local t = scaled - idx_lo
+
+    local c1 = stops[idx_lo]
+    local c2 = stops[idx_hi]
+    return {
+        c1[1] + (c2[1] - c1[1]) * t,
+        c1[2] + (c2[2] - c1[2]) * t,
+        c1[3] + (c2[3] - c1[3]) * t,
+        1.0
+    }
 end
 
 local function draw_grid_labels(lg, offset_x)
@@ -595,18 +743,18 @@ local function draw_heatmap_grid(lg, board, ai_bot, dead_sizes, ai_target, offse
             local y = Visualizer.TOP_MARGIN + r * cs
             local cell_heat = (heat_map and heat_map[r] and heat_map[r][c]) or 0
 
-            local color_idx = 1
-            if max_heat > 0 and cell_heat > 0 then
-                local ratio = cell_heat / max_heat
-                color_idx = math.max(2, math.min(#Visualizer.HEAT_COLORS,
-                    math.floor(ratio * (#Visualizer.HEAT_COLORS - 1)) + 1))
-            end
-
-            lg.setColor(Visualizer.HEAT_COLORS[color_idx])
+            local fill_color = sample_heat_gradient(cell_heat, max_heat, Visualizer.HEAT_COLORS)
+            lg.setColor(fill_color)
             lg.rectangle("fill", x, y, cs, cs)
 
             if cell_heat > 0 then
-                lg.setColor(1.0, 1.0, 1.0, 1.0)
+                -- Adaptive luminance check so numbers remain crisp on bright yellow/amber heat cells
+                local lum = 0.299 * fill_color[1] + 0.587 * fill_color[2] + 0.114 * fill_color[3]
+                if lum > 0.68 then
+                    lg.setColor(0.08, 0.08, 0.10, 1.0)
+                else
+                    lg.setColor(1.0, 1.0, 1.0, 1.0)
+                end
                 lg.printf(tostring(cell_heat), x, y + cs * 0.5 - 7, cs, "center")
             end
 
@@ -635,11 +783,12 @@ function Visualizer.draw(lg)
     local cs = Visualizer.CELL_SIZE
     lg.clear(Visualizer.COLORS.BG[1], Visualizer.COLORS.BG[2], Visualizer.COLORS.BG[3], 1.0)
 
-    -- Top Bot Selector Ribbon
+    -- Top Bot & Theme Selector Ribbon
+    local theme_spec = Visualizer.THEMES[st.theme_key] or Visualizer.THEMES.classic
     lg.setColor(Visualizer.COLORS.TELEMETRY)
     local bot_bar = string.format(
-        "Active Bot: [%s]   |   Hotkeys: [1] Mycroft  [2] Sherlock  [3] Watson  [4] Lestrade  [5] Adler  [6] Moriarty  [7] MCMC  |  [M] Mode: %s",
-        string.upper(st.bot_key), st.mode
+        "Bot: [%s] (1..7/TAB)  |  [C] Theme: %s  |  [M] Mode: %s",
+        string.upper(st.bot_key), theme_spec.label, st.mode
     )
     lg.print(bot_bar, Visualizer.LEFT_GRID_X, 18)
 
@@ -686,7 +835,7 @@ function Visualizer.draw(lg)
 
             draw_heatmap_grid(lg, st.game.tracking_board, st.ai_bot, st.dead_sizes, nil, Visualizer.RIGHT_GRID_X)
             lg.setColor(Visualizer.COLORS.LABEL)
-            lg.print("SETUP PHASE — Left Click: Place Ship | Right Click / [T]: Rotate | [R]: Randomize & Start | [F]: Quick Start",
+            lg.print("SETUP — Left Click: Place Ship | Right Click / [T]: Rotate | [R]: Randomize & Start | [F]: Quick Start | [C]: Theme",
                 Visualizer.LEFT_GRID_X, Visualizer.TOP_MARGIN + 10 * cs + 28)
         else
             draw_heatmap_grid(lg, st.game.tracking_board, st.ai_bot, st.dead_sizes, st.ai_target, Visualizer.RIGHT_GRID_X)
@@ -695,7 +844,7 @@ function Visualizer.draw(lg)
                 lg.print(string.format("Strategy: %s   (%.2f ms)", st.strategy, st.last_infer_ms),
                     Visualizer.LEFT_GRID_X, Visualizer.TOP_MARGIN + 10 * cs + 22)
                 lg.setColor(Visualizer.COLORS.LABEL)
-                lg.print("[SPACE] Step AI Shot  |  [A] Toggle Auto-Fire  |  [U / LEFT] Undo  |  [H] Hide/Show Ships  |  [N] New Setup  |  [F] Fast Reset",
+                lg.print("[SPACE] Step Shot  |  [A] Auto-Fire  |  [U / LEFT] Undo  |  [H] Ships  |  [C] Theme  |  [N] Setup  |  [F] Fast Reset",
                     Visualizer.LEFT_GRID_X, Visualizer.TOP_MARGIN + 10 * cs + 48)
             else
                 lg.setColor(Visualizer.COLORS.VICTORY)
@@ -734,7 +883,7 @@ function Visualizer.draw(lg)
                 st.current_shot_index, game_data.total_shots, st.replay_strategy, st.last_infer_ms),
                 Visualizer.LEFT_GRID_X, Visualizer.TOP_MARGIN + 10 * cs + 22)
             lg.setColor(Visualizer.COLORS.LABEL)
-            lg.print("LEFT/RIGHT: Scrub Shot Timeline  |  UP/DOWN: Switch Outlier Game  |  W/S: Shot Filter (+5/-5)  |  1..7: Switch Bot",
+            lg.print("LEFT/RIGHT: Scrub Shot Timeline  |  UP/DOWN: Switch Game  |  W/S: Shot Filter  |  [C] Theme  |  1..7: Switch Bot",
                 Visualizer.LEFT_GRID_X, Visualizer.TOP_MARGIN + 10 * cs + 48)
         else
             lg.setColor(Visualizer.COLORS.LABEL)
@@ -749,7 +898,7 @@ end
 -- 6. LOVE2D LIFECYCLE HOOKS
 -- ==========================================
 local function parse_love_args(arg_list)
-    local opts = { bot = "mycroft", mode = "live" }
+    local opts = { bot = "mycroft", mode = "live", theme = "classic" }
     if not arg_list then return opts end
     local i = 1
     while i <= #arg_list do
@@ -759,6 +908,9 @@ local function parse_love_args(arg_list)
             i = i + 2
         elseif a == "--mode" and arg_list[i + 1] then
             opts.mode = arg_list[i + 1]
+            i = i + 2
+        elseif a == "--theme" and arg_list[i + 1] then
+            opts.theme = arg_list[i + 1]
             i = i + 2
         elseif a == "--csv" and arg_list[i + 1] then
             opts.csv = arg_list[i + 1]

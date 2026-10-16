@@ -155,4 +155,23 @@ do
         #st.all_replay_games))
 end
 
+-- TEST 4: Multi-Theme System & [C] Theme Cycling
+do
+    local st = Visualizer.state
+    assert_eq(st.theme_key, "classic", "Default theme is classic")
+
+    local expected_cycle = { "baker_street", "sonar_crt", "abyssal", "classic" }
+    for _, expected_theme in ipairs(expected_cycle) do
+        Visualizer.keypressed("c")
+        assert_eq(st.theme_key, expected_theme, "Cycled theme via [C] to " .. expected_theme)
+        assert_eq(Visualizer.COLORS, Visualizer.THEMES[expected_theme].colors, "Active COLORS table updated")
+        assert_eq(Visualizer.HEAT_COLORS, Visualizer.THEMES[expected_theme].heat_colors, "Active HEAT_COLORS table updated")
+        draw_calls.rectangles = 0
+        love.draw()
+        assert_true(draw_calls.rectangles >= 200, "Rendered cleanly with theme " .. expected_theme)
+    end
+
+    print("[PASS] Test 4: All 4 themes (classic, baker_street, sonar_crt, abyssal) and [C] hotkey cycling verified.")
+end
+
 print("\n🎉 ALL LOVE2D VISUALIZER TESTS PASSED SUCCESSFULLY! ZERO DEFECTS.")
