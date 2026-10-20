@@ -1,14 +1,16 @@
 -- lua/bots/moriarty.lua
--- Tier 2: MoriartyBot (Professor James Moriarty — Pure Essential Neural Network Bot)
+-- Tier 2: MoriartyBot (Professor James Moriarty — Neural Network Bot)
 -- Canonical Strategy:
 --   1. 4-Channel 10x10 Spatial Input Tensor (matching `bots/neural_bot.py`):
 --        Channel 0: Misses (1.0 where board[r][c] == CELL_MISS)
 --        Channel 1: Active Hits (1.0 where board[r][c] == CELL_HIT)
 --        Channel 2: Sunk Ships (1.0 where board[r][c] == CELL_SUNK)
 --        Channel 3: Parity Mask (1.0 where (r + c) % 2 == parity_offset)
---   2. Dual-Head Spatial ConvNet Forward Pass (Policy Logits [100] + Occupancy Logits [100]):
---        - Occupancy Head -> sigmoid(occ_logits) * 100 -> real-time 10x10 heatmap
---        - Policy Head    -> softmax(policy_logits)    -> categorical shot distribution
+--   2. Trained Residual ConvNet Forward Pass (`data/moriarty_fused.bin` trained on 1M games):
+--        - Stem: Conv2d(4->64, 3x3, pad=1) + BN (fused) + LeakyReLU(0.1)
+--        - Backbone: 4 x ResConvBlock(64) with LeakyReLU(0.1)
+--        - Occupancy Head: Conv2d(64->32, 3x3) + LeakyReLU(0.1) + Conv2d(32->1, 1x1) -> sigmoid * 100
+--        - Policy Head: Conv2d(64->32, 3x3) + LeakyReLU(0.1) -> Linear(3200->256) -> Linear(256->100) -> softmax
 --   3. Assassin Mode (use_linear_kill = true default):
 --        - Uses CSP Deduction + Exact Combinatorial Target Density to finish wounded ships.
 --   4. Pure Neural Hunt Mode (Zero Maverick/Mycroft Fallback):
@@ -31,11 +33,81 @@ MoriartyBot.HIDDEN_CHANNELS = 16
 local float_tensor_4x100_t  = ffi.typeof("float[400]")
 local float_pad_4x144_t     = ffi.typeof("float[576]")
 local float_pad_16x144_t    = ffi.typeof("float[2304]")
+local float_pad_64x144_t    = ffi.typeof("float[9216]")
+local float_tensor_64x100_t = ffi.typeof("float[6400]")
+local float_tensor_32x100_t = ffi.typeof("float[3200]")
+local float_vec_256_t       = ffi.typeof("float[256]")
 local float_vec_100_t       = ffi.typeof("float[100]")
 
+-- ============================================================================
+-- 1. TRAINED RESNET WEIGHT LOADER (`data/moriarty_fused.bin`)
+-- ============================================================================
+local RESNET_TOTAL_FLOATS = 1179909
+local _cached_resnet_weights = nil
+local _tried_loading_resnet = false
+
+-- Exact float offsets from `ml/export_fused_weights.py`
+local OFFSETS = {
+    stem_w = 0,       stem_b = 2304,
+    res0_w1 = 2368,   res0_b1 = 39232,
+    res0_w2 = 39296,  res0_b2 = 76160,
+    res1_w1 = 76224,  res1_b1 = 113088,
+    res1_w2 = 113152, res1_b2 = 150016,
+    res2_w1 = 150080, res2_b1 = 186944,
+    res2_w2 = 187008, res2_b2 = 223872,
+    res3_w1 = 223936, res3_b1 = 260800,
+    res3_w2 = 260864, res3_b2 = 297728,
+    occ1_w = 297792,  occ1_b = 316224,
+    occ2_w = 316256,  occ2_b = 316288,
+    pol1_w = 316289,  pol1_b = 334721,
+    fc1_w  = 334753,  fc1_b  = 1153953,
+    fc2_w  = 1154209, fc2_b  = 1179809
+}
+
+local function load_trained_resnet_weights()
+    if _tried_loading_resnet then
+        return _cached_resnet_weights
+    end
+    _tried_loading_resnet = true
+
+    local paths = {
+        "data/moriarty_fused.bin",
+        "../data/moriarty_fused.bin",
+        "/home/khan8/Work/battleship-bots/data/moriarty_fused.bin"
+    }
+
+    local f = nil
+    for _, p in ipairs(paths) do
+        f = io.open(p, "rb")
+        if f then break end
+    end
+    if not f then
+        return nil
+    end
+
+    local raw = f:read("*a")
+    f:close()
+    if not raw or #raw < 8 + RESNET_TOTAL_FLOATS * 4 then
+        return nil
+    end
+
+    local magic = raw:sub(1, 4)
+    if magic ~= "MOR1" then
+        return nil
+    end
+
+    local buf = ffi.new("float[?]", RESNET_TOTAL_FLOATS)
+    ffi.copy(buf, ffi.cast("const char*", raw) + 8, RESNET_TOTAL_FLOATS * 4)
+    _cached_resnet_weights = buf
+    return _cached_resnet_weights
+end
+
+-- ============================================================================
+-- 2. COMPACT FALLBACK CONVNET WEIGHTS
+-- ============================================================================
 local CONV1_W_SIZE = MoriartyBot.HIDDEN_CHANNELS * MoriartyBot.IN_CHANNELS * 9
 local CONV1_B_SIZE = MoriartyBot.HIDDEN_CHANNELS
-local CONV2_W_SIZE = 2 * MoriartyBot.HIDDEN_CHANNELS * 9 -- Out ch 0 = policy, Out ch 1 = occupancy
+local CONV2_W_SIZE = 2 * MoriartyBot.HIDDEN_CHANNELS * 9
 local CONV2_B_SIZE = 2
 
 local conv1_w_t = ffi.typeof("float[$]", CONV1_W_SIZE)
@@ -43,18 +115,12 @@ local conv1_b_t = ffi.typeof("float[$]", CONV1_B_SIZE)
 local conv2_w_t = ffi.typeof("float[$]", CONV2_W_SIZE)
 local conv2_b_t = ffi.typeof("float[$]", CONV2_B_SIZE)
 
---- Initialize default essential spatial ConvNet weights:
--- Channels 0..7 act as Horizontal Span Receptive Fields; Channels 8..15 act as Vertical Span Receptive Fields.
--- When both left+right (or up+down) are blocked by misses/walls/sunk ships, ReLU clamps that orientation's
--- feature activation to 0.0, naturally teaching the ConvNet that ships cannot fit in 1x1 pockets!
 local function create_default_weights()
     local w1 = conv1_w_t()
     local b1 = conv1_b_t()
     local w2 = conv2_w_t()
     local b2 = conv2_b_t()
 
-    -- Kernel indices k = 0..8 correspond to (dr, dc) in {-1,0,1} x {-1,0,1}:
-    -- 0:(-1,-1), 1:(-1,0)[UP], 2:(-1,1), 3:(0,-1)[LEFT], 4:(0,0)[CENTER], 5:(0,1)[RIGHT], 6:(1,-1), 7:(1,0)[DOWN], 8:(1,1)
     for oc = 0, MoriartyBot.HIDDEN_CHANNELS - 1 do
         local is_horiz_detector = (oc < 8)
         b1[oc] = 0.85 + 0.01 * (oc % 8)
@@ -65,20 +131,18 @@ local function create_default_weights()
                 local val = 0.0
 
                 if ic == 0 or ic == 2 then
-                    -- Channel 0 (Misses/Walls) & Channel 2 (Sunk): directional span inhibition
                     if k == 4 then
                         val = -2.50
                     elseif is_horiz_detector and (k == 3 or k == 5) then
-                        val = -0.55 -- Both left & right blocked -> 0.85 - 1.10 = -0.25 -> clamped by ReLU!
+                        val = -0.55
                     elseif (not is_horiz_detector) and (k == 1 or k == 7) then
-                        val = -0.55 -- Both up & down blocked -> 0.85 - 1.10 = -0.25 -> clamped by ReLU!
+                        val = -0.55
                     elseif k == 1 or k == 3 or k == 5 or k == 7 then
-                        val = -0.08 -- Slight cross-axis clearance preference
+                        val = -0.08
                     else
                         val = -0.03
                     end
                 elseif ic == 1 then
-                    -- Channel 1 (Active Hits): strong excitation along detector's axis
                     if k == 4 then
                         val = -2.00
                     elseif is_horiz_detector and (k == 3 or k == 5) then
@@ -87,7 +151,6 @@ local function create_default_weights()
                         val = 1.40
                     end
                 elseif ic == 3 then
-                    -- Channel 3 (Parity): slight boost for on-parity centers
                     if k == 4 then
                         val = 0.15
                     end
@@ -98,9 +161,8 @@ local function create_default_weights()
         end
     end
 
-    -- Layer 2: Aggregate 16 directional span feature maps into Policy (ch 0) and Occupancy (ch 1) logits
-    b2[0] = -1.20 -- Policy logit bias
-    b2[1] = -1.60 -- Occupancy logit bias (so sigmoid(occ_logit) spans ~15% to ~80%)
+    b2[0] = -1.20
+    b2[1] = -1.60
 
     for oc = 0, 1 do
         local scale = (oc == 0) and 0.28 or 0.22
@@ -111,10 +173,8 @@ local function create_default_weights()
                 if k == 4 then
                     w2[idx] = scale * 1.40
                 elseif is_horiz_detector and (k == 3 or k == 5) then
-                    -- Propagate horizontal span capacity along the row
                     w2[idx] = scale * 0.45
                 elseif (not is_horiz_detector) and (k == 1 or k == 7) then
-                    -- Propagate vertical span capacity along the column
                     w2[idx] = scale * 0.45
                 elseif k == 1 or k == 3 or k == 5 or k == 7 then
                     w2[idx] = scale * 0.10
@@ -135,6 +195,73 @@ end
 
 local DEFAULT_WEIGHTS = create_default_weights()
 
+-- ============================================================================
+-- 3. FUSED 3x3 CONV2D + LEAKY_RELU HELPERS (ZERO-ALLOCATION FFI)
+-- ============================================================================
+
+--- Copy 10x10 channels [C, 100] into zero-padded 12x12 buffer [C, 144]
+local function pad_10x10_to_12x12(src_100, dst_144, channels)
+    ffi.fill(dst_144, channels * 144 * 4, 0)
+    for ch = 0, channels - 1 do
+        local s_base = ch * 100
+        local d_base = ch * 144
+        for r = 0, 9 do
+            local s_row = s_base + r * 10
+            local d_row = d_base + (r + 1) * 12 + 1
+            for c = 0, 9 do
+                dst_144[d_row + c] = src_100[s_row + c]
+            end
+        end
+    end
+end
+
+--- 3x3 Conv2d over 12x12 padded input -> 10x10 output
+local function conv3x3_forward(pad_in, in_ch, out_100, out_ch, w_ptr, b_ptr, apply_leaky_relu, residual_100)
+    for oc = 0, out_ch - 1 do
+        local out_base = oc * 100
+        local bias = b_ptr[oc]
+        for i = 0, 99 do
+            out_100[out_base + i] = bias
+        end
+
+        for ic = 0, in_ch - 1 do
+            local in_base = ic * 144
+            local w_base = (oc * in_ch + ic) * 9
+            local k0, k1, k2 = w_ptr[w_base],     w_ptr[w_base + 1], w_ptr[w_base + 2]
+            local k3, k4, k5 = w_ptr[w_base + 3], w_ptr[w_base + 4], w_ptr[w_base + 5]
+            local k6, k7, k8 = w_ptr[w_base + 6], w_ptr[w_base + 7], w_ptr[w_base + 8]
+
+            for r = 1, 10 do
+                local r12 = in_base + r * 12
+                local out_r10 = out_base + (r - 1) * 10
+                for c = 1, 10 do
+                    local idx = r12 + c
+                    local o_idx = out_r10 + (c - 1)
+                    out_100[o_idx] = out_100[o_idx]
+                        + pad_in[idx - 13] * k0 + pad_in[idx - 12] * k1 + pad_in[idx - 11] * k2
+                        + pad_in[idx -  1] * k3 + pad_in[idx     ] * k4 + pad_in[idx +  1] * k5
+                        + pad_in[idx + 11] * k6 + pad_in[idx + 12] * k7 + pad_in[idx + 13] * k8
+                end
+            end
+        end
+
+        if residual_100 then
+            for i = 0, 99 do
+                local v = out_100[out_base + i] + residual_100[out_base + i]
+                if apply_leaky_relu and v < 0.0 then v = v * 0.1 end
+                out_100[out_base + i] = v
+            end
+        elseif apply_leaky_relu then
+            for i = 0, 99 do
+                local v = out_100[out_base + i]
+                if v < 0.0 then
+                    out_100[out_base + i] = v * 0.1
+                end
+            end
+        end
+    end
+end
+
 --- Constructor
 -- @param parity_offset number (0 or 1, default 0)
 -- @param use_linear_kill boolean (optional, default true): Use CSP Assassin mode when active hits exist
@@ -151,11 +278,17 @@ function MoriartyBot:init(parity_offset, use_linear_kill, custom_forward_fn)
     self.deduction = Deduction.new()
     self.combinatorics = Combinatorics.new()
     self.weights = DEFAULT_WEIGHTS
+    self.resnet_weights = load_trained_resnet_weights()
 
     -- Reusable FFI buffers for zero-allocation, JIT-compiled inference
     self._input_buf     = float_tensor_4x100_t()
     self._pad_in_buf    = float_pad_4x144_t()
     self._pad_hid_buf   = float_pad_16x144_t()
+    self._pad64_buf     = float_pad_64x144_t()
+    self._feat64_a      = float_tensor_64x100_t()
+    self._feat64_b      = float_tensor_64x100_t()
+    self._head32_buf    = float_tensor_32x100_t()
+    self._fc256_buf     = float_vec_256_t()
     self._policy_logits = float_vec_100_t()
     self._occ_logits    = float_vec_100_t()
     self._policy_probs  = float_vec_100_t()
@@ -167,32 +300,16 @@ function MoriartyBot:reset(game_id, parity_offset)
 end
 
 --- Set a custom neural forward pass function for experimentation
--- @param fn function: `fn(input_tensor_4x10x10, bot) -> policy_logits_100, occ_logits_100`
 function MoriartyBot:set_forward_fn(fn)
     self.custom_forward_fn = fn
 end
 
 --- Build the 4-channel 10x10 input tensor matching `bots/neural_bot.py`
--- Channel 0: CELL_MISS (1.0 or 0.0)
--- Channel 1: CELL_HIT  (1.0 or 0.0)
--- Channel 2: CELL_SUNK (1.0 or 0.0)
--- Channel 3: Parity    (1.0 where (r + c) % 2 == self.parity_offset)
--- @param board table: 0-indexed 10x10 tracking board
--- @param as_lua_table boolean (optional): Also return a 0-indexed [4][10][10] Lua table
--- @return cdata (float[400]), table|nil
 function MoriartyBot:build_input_tensor(board, as_lua_table)
     local buf = self._input_buf
     local pad = self._pad_in_buf
     ffi.fill(buf, ffi.sizeof(buf), 0)
     ffi.fill(pad, ffi.sizeof(pad), 0)
-
-    -- Mark out-of-bounds border of Channel 0 (12x12 grid) as 1.0 (boundary wall)
-    for idx = 0, 11 do
-        pad[idx] = 1.0               -- Top border row (r = 0)
-        pad[11 * 12 + idx] = 1.0     -- Bottom border row (r = 11)
-        pad[idx * 12] = 1.0          -- Left border col (c = 0)
-        pad[idx * 12 + 11] = 1.0     -- Right border col (c = 11)
-    end
 
     for r = 0, 9 do
         local row = board[r]
@@ -237,10 +354,79 @@ function MoriartyBot:build_input_tensor(board, as_lua_table)
     return buf, tensor
 end
 
+--- Execute the 1M-game trained ResNet forward pass (`SherlockNeuralModel`)
+function MoriartyBot:forward_resnet(rw)
+    local pad_in = self._pad_in_buf
+    local pad64  = self._pad64_buf
+    local feat_a = self._feat64_a
+    local feat_b = self._feat64_b
+    local head32 = self._head32_buf
+    local fc256  = self._fc256_buf
+    local p_logits = self._policy_logits
+    local o_logits = self._occ_logits
+
+    -- 1. Stem: Conv2d(4 -> 64, 3x3, pad=1) + LeakyReLU(0.1)
+    conv3x3_forward(pad_in, 4, feat_a, 64, rw + OFFSETS.stem_w, rw + OFFSETS.stem_b, true, nil)
+
+    -- 2. ResBlock 0..3
+    local res_w1 = { OFFSETS.res0_w1, OFFSETS.res1_w1, OFFSETS.res2_w1, OFFSETS.res3_w1 }
+    local res_b1 = { OFFSETS.res0_b1, OFFSETS.res1_b1, OFFSETS.res2_b1, OFFSETS.res3_b1 }
+    local res_w2 = { OFFSETS.res0_w2, OFFSETS.res1_w2, OFFSETS.res2_w2, OFFSETS.res3_w2 }
+    local res_b2 = { OFFSETS.res0_b2, OFFSETS.res1_b2, OFFSETS.res2_b2, OFFSETS.res3_b2 }
+
+    for b = 1, 4 do
+        pad_10x10_to_12x12(feat_a, pad64, 64)
+        conv3x3_forward(pad64, 64, feat_b, 64, rw + res_w1[b], rw + res_b1[b], true, nil)
+        pad_10x10_to_12x12(feat_b, pad64, 64)
+        conv3x3_forward(pad64, 64, feat_b, 64, rw + res_w2[b], rw + res_b2[b], true, feat_a)
+        ffi.copy(feat_a, feat_b, 6400 * 4)
+    end
+
+    -- Pad final backbone features [64, 10, 10] -> [64, 12, 12]
+    pad_10x10_to_12x12(feat_a, pad64, 64)
+
+    -- 3. Occupancy Head: Conv2d(64 -> 32, 3x3) + LeakyReLU(0.1) -> Conv2d(32 -> 1, 1x1)
+    conv3x3_forward(pad64, 64, head32, 32, rw + OFFSETS.occ1_w, rw + OFFSETS.occ1_b, true, nil)
+    local occ2_w = rw + OFFSETS.occ2_w
+    local occ2_b = rw[OFFSETS.occ2_b]
+    for i = 0, 99 do
+        local sum = occ2_b
+        for ch = 0, 31 do
+            sum = sum + head32[ch * 100 + i] * occ2_w[ch]
+        end
+        o_logits[i] = sum
+    end
+
+    -- 4. Policy Head: Conv2d(64 -> 32, 3x3) + LeakyReLU(0.1) -> Linear(3200 -> 256) + LeakyReLU(0.1) -> Linear(256 -> 100)
+    conv3x3_forward(pad64, 64, head32, 32, rw + OFFSETS.pol1_w, rw + OFFSETS.pol1_b, true, nil)
+
+    local fc1_w = rw + OFFSETS.fc1_w
+    local fc1_b = rw + OFFSETS.fc1_b
+    for o = 0, 255 do
+        local sum = fc1_b[o]
+        local w_row = fc1_w + o * 3200
+        for j = 0, 3199 do
+            sum = sum + head32[j] * w_row[j]
+        end
+        if sum < 0.0 then sum = sum * 0.1 end
+        fc256[o] = sum
+    end
+
+    local fc2_w = rw + OFFSETS.fc2_w
+    local fc2_b = rw + OFFSETS.fc2_b
+    for o = 0, 99 do
+        local sum = fc2_b[o]
+        local w_row = fc2_w + o * 256
+        for j = 0, 255 do
+            sum = sum + fc256[j] * w_row[j]
+        end
+        p_logits[o] = sum
+    end
+
+    return p_logits, o_logits
+end
+
 --- Run the Neural Network Forward Pass on the 4-channel 10x10 input tensor
--- Uses unrolled 9-tap stencil over 12x12 padded FFI buffers so LuaJIT compiles it to flat SIMD loops.
--- @param board table: 0-indexed 10x10 tracking board
--- @return cdata (float[100] policy_logits), cdata (float[100] occ_logits)
 function MoriartyBot:forward(board)
     local x_buf = self:build_input_tensor(board, false)
 
@@ -257,6 +443,11 @@ function MoriartyBot:forward(board)
         return self._policy_logits, self._occ_logits
     end
 
+    if self.resnet_weights ~= nil then
+        return self:forward_resnet(self.resnet_weights)
+    end
+
+    -- Fallback lightweight ConvNet if binary file is absent
     local pad_in  = self._pad_in_buf
     local pad_hid = self._pad_hid_buf
     local w1      = self.weights.conv1_w
@@ -264,9 +455,15 @@ function MoriartyBot:forward(board)
     local w2      = self.weights.conv2_w
     local b2      = self.weights.conv2_b
 
+    for idx = 0, 11 do
+        pad_in[idx] = 1.0
+        pad_in[11 * 12 + idx] = 1.0
+        pad_in[idx * 12] = 1.0
+        pad_in[idx * 12 + 11] = 1.0
+    end
+
     ffi.fill(pad_hid, ffi.sizeof(pad_hid), 0)
 
-    -- Layer 1: Conv2d(4 -> 16, 3x3) + ReLU
     for oc = 0, MoriartyBot.HIDDEN_CHANNELS - 1 do
         local out_base = oc * 144
         local b_val = b1[oc]
@@ -297,7 +494,6 @@ function MoriartyBot:forward(board)
             end
         end
 
-        -- ReLU activation on interior 10x10 grid
         for r = 1, 10 do
             local r12 = out_base + r * 12
             for c = 1, 10 do
@@ -309,7 +505,6 @@ function MoriartyBot:forward(board)
         end
     end
 
-    -- Layer 2: Dual-Head Conv2d(16 -> 2, 3x3) -> Policy Logits (oc=0) & Occupancy Logits (oc=1)
     local p_logits = self._policy_logits
     local o_logits = self._occ_logits
     local bp = b2[0]
@@ -400,6 +595,9 @@ end
 
 --- Generate 10x10 integer heatmap (0..100) from Neural Occupancy Head (matching `NeuralBot.get_heatmap`)
 function MoriartyBot:get_heatmap(board, dead_sizes)
+    if self.last_heatmap then
+        return self.last_heatmap
+    end
     local _, occ_logits = self:forward(board)
     local heatmap = self:create_blank_matrix(0)
 
@@ -420,11 +618,6 @@ function MoriartyBot:get_heatmap(board, dead_sizes)
 end
 
 --- Core Decision Engine (Exact Lua counterpart of `bots/neural_bot.py`):
--- 1. ASSASSIN / TARGET PHASE: If `self.use_linear_kill` is enabled and CSP deduction detects
---    active (unsunk) hits, uses exact target density across tied CSP hypotheses to sink the ship.
--- 2. PURE NEURAL HUNT PHASE: Evaluates the neural policy distribution `softmax(policy_logits)`,
---    masks out already-fired squares, and selects the highest-probability cell on the parity
---    checkerboard (or across all open squares if parity squares are exhausted).
 function MoriartyBot:get_best_move(board, move_history)
     local solutions = self.deduction:analyze(board, move_history)
     local primary_sol = solutions[1]
@@ -495,7 +688,14 @@ function MoriartyBot:get_best_move(board, move_history)
         if #best_targets > 0 then
             local pick_idx = ((self.parity_offset * 10007 + #move_history) % #best_targets) + 1
             local target = best_targets[pick_idx]
-            local heat = self:get_heatmap(board, dead_sizes)
+            local heat = self:create_blank_matrix(0)
+            if max_target_count > 0 then
+                for idx, cnt in pairs(total_target_counts) do
+                    local r = math.floor(idx / 10)
+                    local c = idx % 10
+                    heat[r][c] = math.floor((cnt / max_target_count) * 100)
+                end
+            end
             heat[target.x][target.y] = 100
             self.last_heatmap = heat
             diagnostics.moriarty_mode = "Assassin"

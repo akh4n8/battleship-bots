@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battleship AI Research Showcase — Watson, Sherlock, Mycroft &amp; Moriarty</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- Sticky Navigation Header -->
+  <header class="top-nav">
+    <div class="top-nav-inner">
+      <div class="brand-title">
+        <span>🚢 Battleship AI Laboratory</span>
+        <span class="brand-pill">10×10 Fog-of-War • Continuous Fire</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#arena-section" class="nav-link">1. Live Bot Arena</a>
+        <a href="#benchmark-section" class="nav-link">2. Leaderboard</a>
+        <a href="#csp-section" class="nav-link">3. 5-Layer CSP Deduction</a>
+        <a href="#joint-section" class="nav-link">4. By-Hand Step-by-Step Math</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ================================================================== -->
+    <!-- SECTION 1: INTERACTIVE MULTI-BOT ARENA                             -->
+    <!-- ================================================================== -->
+    <section id="arena-section" class="section-block">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">1. Interactive Multi-Bot Heatmaps &amp; Decision Arena</h1>
+          <p class="section-subtitle">Click any square on the board to fire manually, load an ambiguity preset (all 5 ships placed), or trigger any bot's best shot.</p>
+        </div>
+        <div class="toolbar-group">
+          <button id="btn-view-quad" class="btn active" title="Show all 4 bot heatmaps simultaneously">4-Bot Quad View</button>
+          <button id="btn-view-dual" class="btn" title="Focus on 2 bot heatmaps side-by-side">2-Bot Focus View</button>
+          <button id="btn-theme" class="btn"><span class="kbd">C</span> Theme: Classic Tactical</button>
+        </div>
+      </div>
+
+      <!-- Classic Showcase Controls Bar -->
+      <div class="controls-toolbar">
+        <div class="toolbar-group">
+          <button id="btn-preset-1" class="btn" title="End-to-End Collinear Train (Destroyer 2 + Cruiser 3)"><span class="kbd">1</span> Train</button>
+          <button id="btn-preset-2" class="btn" title="T-Bone / Cross Intersection"><span class="kbd">2</span> T-Bone</button>
+          <button id="btn-preset-3" class="btn" title="5-Ship Parallel Phalanx Wall"><span class="kbd">3</span> Phalanx</button>
+          <button id="btn-preset-4" class="btn" title="L-Corner &amp; Pocketed Destroyer"><span class="kbd">4</span> L-Pocket</button>
+          <button id="btn-preset-5" class="btn" title="Twin Size-3 Staggered Overlap"><span class="kbd">5</span> Twin-3s</button>
+          <button id="btn-fire-trap" class="btn btn-accent" title="Auto-fire the ambiguity trap shots for the active preset"><span class="kbd">F</span> ⚡ Fire Trap Shots</button>
+          <button id="btn-randomize" class="btn" title="Randomize Board"><span class="kbd">R</span> Randomize</button>
+          <button id="btn-setup" class="btn" title="Manual Ship Placement"><span class="kbd">N</span> Place Ships</button>
+        </div>
+
+        <div class="toolbar-group">
+          <button id="btn-undo" class="btn" title="Undo Last Shot"><span class="kbd">U</span> Undo</button>
+          <button id="btn-toggle-ships" class="btn active" title="Toggle Ships &amp; CSP Diagnostics"><span class="kbd">H</span> Ships &amp; CSP UI</button>
+          <button id="btn-autoplay" class="btn" title="Toggle Continuous Auto-Fire"><span class="kbd">A</span> Auto-Fire:</button>
+          <select id="select-autobot" class="select-pill" aria-label="Select Auto-Fire Bot">
+            <option value="mycroft" selected>Mycroft</option>
+            <option value="sherlock">Sherlock</option>
+            <option value="watson">Watson</option>
+            <option value="moriarty">Moriarty</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="arena-layout">
+        <!-- Left: Master Interactive Gameboard -->
+        <div class="master-board-card">
+          <div class="master-card-top">
+            <span class="master-card-title">Interactive Gameboard</span>
+            <div class="legend-inline">
+              <span><i class="legend-dot" style="background:#FF3232;"></i>Hit</span>
+              <span><i class="legend-dot" style="background:#3296FF;"></i>Sunk</span>
+              <span><i class="legend-dot" style="background:#00E5FF;"></i>Active Hit</span>
+              <span><i class="legend-dot" style="background:#B4BECD;"></i>Locked Corpse</span>
+            </div>
+          </div>
+          <canvas id="master-board-canvas" width="420" height="420"></canvas>
+          <div id="master-board-status" class="board-status-pill play">Ready — Click any cell to fire</div>
+        </div>
+
+        <!-- Right: 4-Bot Quad / 2-Bot Dual Heatmaps -->
+        <div class="heatmaps-panel">
+          <div id="dual-slot-selectors" class="heatmaps-panel-bar hidden">
+            <div class="toolbar-group">
+              <span style="font-size:0.8rem;color:var(--text-secondary);">Left Bot:</span>
+              <select id="select-slot-1" class="select-pill">
+                <option value="watson">Watson</option>
+                <option value="sherlock" selected>Sherlock</option>
+                <option value="mycroft">Mycroft</option>
+                <option value="moriarty">Moriarty</option>
+              </select>
+              <span style="font-size:0.8rem;color:var(--text-secondary);margin-left:8px;">Right Bot:</span>
+              <select id="select-slot-2" class="select-pill">
+                <option value="watson">Watson</option>
+                <option value="sherlock">Sherlock</option>
+                <option value="mycroft" selected>Mycroft</option>
+                <option value="moriarty">Moriarty</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="bot-heatmaps-grid" class="quad-mode">
+            <!-- Watson Card -->
+            <div class="bot-heatmap-card" data-bot="watson">
+              <div class="bot-card-header">
+                <div class="bot-name-group">
+                  <span class="bot-name" style="color:#3CFF78;">Watson</span>
+                  <span class="bot-badge">CSP + Marginal Parity</span>
+                </div>
+                <button id="btn-shoot-watson" class="btn"><span class="kbd">W</span> Shoot</button>
+              </div>
+              <canvas id="heatmap-canvas-watson" class="bot-heatmap-canvas" width="270" height="270"></canvas>
+              <div id="bot-telemetry-watson" class="bot-telemetry-footer">Target: E5</div>
+            </div>
+
+            <!-- Sherlock Card -->
+            <div class="bot-heatmap-card" data-bot="sherlock">
+              <div class="bot-card-header">
+                <div class="bot-name-group">
+                  <span class="bot-name" style="color:#FFC864;">Sherlock</span>
+                  <span class="bot-badge">Exact Joint Distribution</span>
+                </div>
+                <button id="btn-shoot-sherlock" class="btn"><span class="kbd">S</span> Shoot</button>
+              </div>
+              <canvas id="heatmap-canvas-sherlock" class="bot-heatmap-canvas" width="270" height="270"></canvas>
+              <div id="bot-telemetry-sherlock" class="bot-telemetry-footer">Target: E5</div>
+            </div>
+
+            <!-- Mycroft Card -->
+            <div class="bot-heatmap-card" data-bot="mycroft">
+              <div class="bot-card-header">
+                <div class="bot-name-group">
+                  <span class="bot-name" style="color:#00E5FF;">Mycroft</span>
+                  <span class="bot-badge">Shannon Entropy + Joint</span>
+                </div>
+                <button id="btn-shoot-mycroft" class="btn"><span class="kbd">M</span> Shoot</button>
+              </div>
+              <canvas id="heatmap-canvas-mycroft" class="bot-heatmap-canvas" width="270" height="270"></canvas>
+              <div id="bot-telemetry-mycroft" class="bot-telemetry-footer">Target: E5</div>
+            </div>
+
+            <!-- Moriarty Card -->
+            <div class="bot-heatmap-card" data-bot="moriarty">
+              <div class="bot-card-header">
+                <div class="bot-name-group">
+                  <span class="bot-name" style="color:#B388FF;">Moriarty</span>
+                  <span id="moriarty-weights-status" class="bot-badge">ResNet + Assassin</span>
+                </div>
+                <button id="btn-shoot-moriarty" class="btn"><span class="kbd">O</span> Shoot</button>
+              </div>
+              <canvas id="heatmap-canvas-moriarty" class="bot-heatmap-canvas" width="270" height="270"></canvas>
+              <div id="bot-telemetry-moriarty" class="bot-telemetry-footer">Target: E5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- SECTION 2: PAIRED-BOARD TOURNAMENT BENCHMARKS                      -->
+    <!-- ================================================================== -->
+    <section id="benchmark-section" class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">2. Paired-Board Tournament Leaderboard</h2>
+          <p class="section-subtitle">Evaluated on identical master boards under strict Fog of War (blind sinks) and continuous fire.</p>
+        </div>
+      </div>
+
+      <div class="benchmark-canvas-wrap">
+        <canvas id="canvas-benchmark-chart" width="860" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- SECTION 3: 5-LAYER CSP DEDUCTION (SIDE-BY-SIDE TRIPTYCH)           -->
+    <!-- ================================================================== -->
+    <section id="csp-section" class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">3. How the 5-Layer CSP Deduction Solves Blind Sinks</h2>
+          <p class="section-subtitle">When a ship sinks under Fog of War, its size and identity are hidden. Step through the 5 progressive rules below to see how impossible ships are eliminated.</p>
+        </div>
+        <div class="toolbar-group" id="csp-layer-tabs">
+          <button class="btn active" data-layer="0">Layer 1: Minimize Leftovers</button>
+          <button class="btn" data-layer="1">Layer 2: Chronological Order</button>
+          <button class="btn" data-layer="2">Layer 3: Boxed-In Hit Check</button>
+          <button class="btn" data-layer="3">Layer 4: Fleet Inventory</button>
+          <button class="btn" data-layer="4">Layer 5: Tied Consensus</button>
+        </div>
+      </div>
+
+      <div id="csp-layer-banner" class="csp-rule-banner">
+        <strong>Layer 1 (Occam's Razor — Minimize Unexplained Active Hits):</strong> Prefer explanations that account for the maximum number of hits with the fewest leftover active squares.
+      </div>
+
+      <div class="csp-triptych-grid">
+        <!-- Panel 1: Raw Board -->
+        <div class="triptych-card">
+          <div class="triptych-header neutral">1. What the Bot Sees (Fog of War)</div>
+          <canvas id="canvas-layer-raw" width="250" height="230"></canvas>
+          <p id="caption-layer-raw" class="triptych-caption">Three collinear hits in Row D ending in a blind SUNK at D5 (t=6).</p>
+        </div>
+
+        <!-- Panel 2: Rejected Candidate -->
+        <div class="triptych-card rejected">
+          <div id="header-layer-bad" class="triptych-header bad">2. ❌ Rejected: Size-2 Destroyer</div>
+          <canvas id="canvas-layer-bad" width="250" height="230"></canvas>
+          <p id="caption-layer-bad" class="triptych-caption">Leaves D3 as an unexplained leftover hit (1 active hit left over).</p>
+        </div>
+
+        <!-- Panel 3: Accepted CSP Deduction -->
+        <div class="triptych-card accepted">
+          <div id="header-layer-good" class="triptych-header good">3. ✅ Accepted: Size-3 Cruiser</div>
+          <canvas id="canvas-layer-good" width="250" height="230"></canvas>
+          <p id="caption-layer-good" class="triptych-caption">Explains all 3 hits cleanly (0 leftover hits). All 3 cells locked as dead corpse!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- SECTION 4: INTERACTIVE MINI-BOARDS + LIVE HEATMAP EXPLAINER        -->
+    <!-- ================================================================== -->
+    <section id="joint-section" class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">4. How the Algorithms Count &amp; Subtract Ship Placements</h2>
+          <p class="section-subtitle">Every heatmap number is simply the count of valid ship placements covering that square. Hover any square on the Heatmap (or any Mini-Board) to see exactly which placements make up that number.</p>
+        </div>
+        <div class="toolbar-group" id="algo-tab-buttons">
+          <button class="btn active" data-algo="0">1. Marginal vs. Joint Hunt</button>
+          <button class="btn" data-algo="1">2. Last-Ship Shortcut</button>
+          <button class="btn" data-algo="2">3. Miss Subtraction</button>
+          <button class="btn" data-algo="3">4. Target Mode (Linear Kill)</button>
+        </div>
+      </div>
+
+      <!-- Rule / Concept Banner + Contextual Controls -->
+      <div class="algo-banner-bar">
+        <div id="algo-rule-banner" class="csp-rule-banner" style="margin-bottom:0;flex:1;">
+          <strong>1. Marginal vs. Exact Joint Hunt:</strong> Watson counts one ship at a time, while Sherlock &amp; Mycroft subtract placements where ships collide.
+        </div>
+        <div id="algo-subcontrols" class="toolbar-group"></div>
+      </div>
+
+      <!-- Side-by-Side Split: Left = Individual Placements Gallery, Right = Single Interactive Heatmap -->
+      <div class="algo-split-layout">
+        <!-- Left: Visual Gallery of Individual Placements -->
+        <div class="combo-gallery-panel">
+          <div class="combo-gallery-header">
+            <span id="combo-gallery-title" class="combo-gallery-title">Individual Ship Placements</span>
+            <span id="combo-gallery-summary" class="speedup-pill">5 Total − 4 Crossed Out (❌) = 1 Valid (✅)</span>
+          </div>
+          <div id="algo-combo-gallery" class="combo-gallery-grid">
+            <!-- Populated dynamically with mini-board cards -->
+          </div>
+          <div id="combo-hover-hint" class="combo-hover-hint">
+            💡 Hover a square on the Heatmap (or hover a card above) to see which placements contribute <code>+1</code> to each square.
+          </div>
+        </div>
+
+        <!-- Right: Single Live Heatmap Card with Before/After Toggle -->
+        <div class="algo-heatmap-panel">
+          <div class="algo-heatmap-header">
+            <span id="algo-heatmap-title" class="algo-heatmap-title">Resulting Heatmap</span>
+            <div class="toolbar-group" id="algo-view-mode-group">
+              <button class="btn active" data-viewmode="valid">✅ After Subtraction</button>
+              <button class="btn" data-viewmode="all">Before (All)</button>
+            </div>
+          </div>
+          <canvas id="canvas-algo-heatmap" width="320" height="250"></canvas>
+          <div id="algo-heatmap-equation" class="algo-equation-pill">
+            Hover any square to inspect its exact math.
+          </div>
+          <p id="algo-heatmap-caption" class="triptych-caption">
+            Each square's number is the count of green ✅ placements covering it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./js/engine.js"></script>
+  <script src="./js/explainers_ui.js"></script>
+  <script src="./js/arena_ui.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const explainers = new window.ExplainersUI();
+      explainers.init();
+      window.ExplainersController = explainers;
+
+      const arena = new window.ArenaController();
+      arena.init();
+      window.ArenaInstance = arena;
+    });
+  </script>
+</body>
+</html>

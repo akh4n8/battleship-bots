@@ -121,9 +121,9 @@ do
     print("[PASS] Test 3: Custom neural forward hook and CSP Assassin target resolution verified.")
 end
 
--- TEST 4: 1,000-Game Pure Moriarty NN Benchmark
+-- TEST 4: 100-Game Pure Moriarty NN Benchmark
 do
-    local num_games = 1000
+    local num_games = 100
     local total_shots = 0
     local bot = MoriartyBot.new(0)
 

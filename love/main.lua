@@ -163,12 +163,12 @@ Visualizer.BOT_ORDER = {
 }
 
 Visualizer.BOT_SPECS = {
-    mycroft  = { class = MycroftBot,         title = "MycroftBot (Rank 4 Champion)" },
-    sherlock = { class = SherlockBot,        title = "SherlockBot (Rank 3 Exact P1,P2)" },
+    mycroft  = { class = MycroftBot,         title = "MycroftBot (Rank 4 Entropy + Joint)" },
+    sherlock = { class = SherlockBot,        title = "SherlockBot (Rank 3 Exact Joint)" },
     watson   = { class = WatsonBot,          title = "WatsonBot (Rank 2 CSP + Parity)" },
     lestrade = { class = LestradeBot,        title = "LestradeBot (Rank 1 Marginal)" },
     adler    = { class = AdlerBot,           title = "AdlerBot (Tier 2 Bayesian MAP)" },
-    moriarty = { class = MoriartyBot,        title = "MoriartyBot (Tier 2 Pure ConvNet)" },
+    moriarty = { class = MoriartyBot,        title = "Moriarty (Neural ResNet)" },
     mcmc     = { class = MCMCProbabilityBot, title = "MCMCProbabilityBot (Lab 25k)" }
 }
 
@@ -309,6 +309,35 @@ function Visualizer.reset_live_game(randomize_immediately)
         st.phase = "PLAY"
         Visualizer.refresh_live_ai()
     end
+end
+
+function Visualizer.load_preset(preset_id)
+    Visualizer.reset_live_game(false)
+    local st = Visualizer.state
+    local g = st.game
+    if preset_id == 1 then
+        g:place_ship_manual(3, 1, 2, true, 5)
+        g:place_ship_manual(3, 3, 3, true, 3)
+        g:place_ship_manual(0, 0, 5, true, 1)
+        g:place_ship_manual(5, 8, 4, false, 2)
+        g:place_ship_manual(8, 1, 3, true, 4)
+    elseif preset_id == 2 then
+        g:place_ship_manual(4, 2, 4, true, 2)
+        g:place_ship_manual(1, 4, 3, false, 3)
+        g:place_ship_manual(0, 0, 5, false, 1)
+        g:place_ship_manual(7, 1, 3, true, 4)
+        g:place_ship_manual(8, 7, 2, true, 5)
+    else
+        g:place_ship_manual(3, 2, 5, true, 1)
+        g:place_ship_manual(4, 2, 4, true, 2)
+        g:place_ship_manual(5, 2, 3, true, 3)
+        g:place_ship_manual(6, 2, 3, true, 4)
+        g:place_ship_manual(7, 2, 2, true, 5)
+    end
+    st.ships_to_place = {}
+    st.phase = "PLAY"
+    st.preset_id = preset_id
+    Visualizer.refresh_live_ai()
 end
 
 function Visualizer.refresh_live_ai()
@@ -500,13 +529,17 @@ function Visualizer.keypressed(key)
     if st.mode == "LIVE" then
         if key == "n" then
             Visualizer.reset_live_game(false)
-        elseif key == "f" then
+        elseif key == "f" or key == "r" then
             Visualizer.reset_live_game(true)
-        elseif key == "r" and st.phase == "SETUP" then
-            st.game:place_ships_randomly()
-            st.ships_to_place = {}
-            st.phase = "PLAY"
-            Visualizer.refresh_live_ai()
+        elseif key == "f1" then
+            Visualizer.load_preset(1)
+        elseif key == "f2" then
+            Visualizer.load_preset(2)
+        elseif key == "f3" then
+            Visualizer.load_preset(3)
+        elseif key == "p" then
+            local next_p = ((st.preset_id or 0) % 3) + 1
+            Visualizer.load_preset(next_p)
         elseif key == "t" and st.phase == "SETUP" then
             st.is_horizontal = not st.is_horizontal
         elseif st.phase == "PLAY" then

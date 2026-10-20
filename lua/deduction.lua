@@ -404,4 +404,70 @@ function Deduction.has_active_hits(solutions)
     return false
 end
 
+--- Build multi-hypothesis consensus diagnostics table
+-- Active hits = union across all tied hypotheses
+-- Claimed pegs & dead ships = intersection across all tied hypotheses
+function Deduction.build_diagnostics(solutions)
+    if not solutions or #solutions == 0 then
+        return {
+            active = {},
+            claimed = {},
+            dead_ships = {},
+            dead_sizes = {},
+            solutions_count = 0,
+            is_two_ship_dead = false,
+            has_active = false
+        }
+    end
+
+    local primary = solutions[1]
+    local has_active = Deduction.has_active_hits(solutions)
+    local is_2_dead = Deduction.is_size_dead(solutions, 2)
+
+    if #solutions == 1 then
+        return {
+            active = primary.active_hits,
+            claimed = primary.claimed_pegs,
+            dead_ships = primary.dead_ships,
+            dead_sizes = primary.dead_sizes,
+            solutions_count = 1,
+            is_two_ship_dead = is_2_dead,
+            has_active = has_active
+        }
+    end
+
+    local active_bb = Bitboard.empty()
+    local consensus_claimed_bb = Bitboard.from_coords(primary.claimed_pegs)
+
+    for _, sol in ipairs(solutions) do
+        for _, ah in ipairs(sol.active_hits) do
+            active_bb:set(ah.r, ah.c)
+        end
+        consensus_claimed_bb = consensus_claimed_bb:band(Bitboard.from_coords(sol.claimed_pegs))
+    end
+
+    local consensus_dead_ships = {}
+    for _, hull in ipairs(primary.dead_ships) do
+        local trimmed = {}
+        for _, pt in ipairs(hull) do
+            if consensus_claimed_bb:is_set(pt.r, pt.c) then
+                table.insert(trimmed, { r = pt.r, c = pt.c })
+            end
+        end
+        if #trimmed > 0 then
+            table.insert(consensus_dead_ships, trimmed)
+        end
+    end
+
+    return {
+        active = active_bb:to_coords(),
+        claimed = consensus_claimed_bb:to_coords(),
+        dead_ships = consensus_dead_ships,
+        dead_sizes = primary.dead_sizes,
+        solutions_count = #solutions,
+        is_two_ship_dead = is_2_dead,
+        has_active = has_active
+    }
+end
+
 return Deduction

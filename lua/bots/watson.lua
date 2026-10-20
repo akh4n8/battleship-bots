@@ -15,6 +15,7 @@ local WatsonBot = BaseBot:extend("WatsonBot")
 --- Constructor
 -- @param parity_offset number (optional: 0 or 1, default 0)
 function WatsonBot:init(parity_offset)
+    self.parity_offset = parity_offset or 0
     self.deduction = Deduction.new()
     self.combinatorics = Combinatorics.new()
 end
@@ -150,7 +151,18 @@ function WatsonBot:get_best_move(board, move_history)
         end
 
         local available_fleet = get_available_fleet(self.fleet_sizes, sol.dead_sizes)
-        local density, _ = self.combinatorics:compute_hunt_density(available_fleet, forbidden_bb)
+
+        -- Distinct fleet lengths to prevent combinatorial distortion under parity
+        local seen = {}
+        local unique_fleet = {}
+        for _, sz in ipairs(available_fleet) do
+            if not seen[sz] then
+                seen[sz] = true
+                table.insert(unique_fleet, sz)
+            end
+        end
+
+        local density, _ = self.combinatorics:compute_hunt_density(unique_fleet, forbidden_bb)
 
         for r = 0, 9 do
             for c = 0, 9 do
