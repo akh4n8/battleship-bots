@@ -22,9 +22,11 @@ All bots are evaluated on identical master boards under strict Fog of War (blind
 
 ## 🌐 Interactive Web Showcase (`showcase/`)
 
+👉 **[Launch the Live Interactive Showcase](https://akh4n8.github.io/battleship-bots/)**
+
 The repository includes a zero-dependency interactive web showcase (`showcase/`) deployed via GitHub Pages (`.github/workflows/deploy-pages.yml`):
-* **Live 4-Bot Quad & 2-Bot Focus Arena:** Simultaneously inspect **Watson**, **Sherlock**, **Mycroft**, and **Moriarty** (running the BatchNorm-fused 4-ResBlock Residual ConvNet in the browser via Float16 weights) on the same board, complete with Ambiguity Presets (`[1]`, `[2]`, `[3]`), Manual Ship Placement (`[N]`), Undo (`[U]`), and CSP Hypothesis Overlay (`[H]`).
-* **Visual Algorithm Explainers:** Interactive step-by-step diagrams for **Chronological CSP Deduction** (The Blind Sink Problem), **100-bit SWAR 1-Ship Analytic Elimination**, **Incremental Miss-Subtraction** ($Z_{t+1} = Z_t - Z_{\text{ruined}}$), and **Shannon Binary Entropy** $H(p)$.
+* **Live 4-Bot Quad & 2-Bot Focus Arena:** Simultaneously inspect **Watson**, **Sherlock**, **Mycroft**, and **Moriarty** (running the BatchNorm-fused 4-ResBlock Residual ConvNet in the browser via Float16 weights) on the same board, complete with 5 Ambiguity Presets (`[1]..[5]`), `[F] ⚡ Fire Trap Shots`, Manual Ship Placement (`[N]`), Undo (`[U]`), and CSP Hypothesis Overlay (`[H]`).
+* **Visual Algorithm Explainers:** Interactive step-by-step diagrams for **5-Layer Chronological CSP Deduction** (The Blind Sink Problem) and **How the Algorithms Count & Subtract Ship Placements** (Marginal vs. Joint Hunt, Last-Ship Shortcut, Incremental Miss-Subtraction, and Target Mode / Linear Kill).
 
 ```bash
 # Serve the interactive showcase locally
@@ -90,3 +92,9 @@ for t in lua/test/test_*.lua; do
   luajit -e 'package.path = "./?.lua;./lua/?.lua;" .. package.path' "$t"
 done
 ```
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
